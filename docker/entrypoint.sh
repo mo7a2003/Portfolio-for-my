@@ -2,12 +2,12 @@
 set -e
 
 echo "=========================================================="
-echo " Starting Laravel 11 Production Runtime on Render.com"
+echo " Starting Laravel 11 Production Runtime"
 echo "=========================================================="
 
-# 1. Dynamic Render $PORT binding
+# 1. Dynamic Port Binding for Render / Cloud Hosts
 PORT="${PORT:-80}"
-echo "==> Binding Nginx to target Render port: ${PORT}"
+echo "==> Configuring port binding: ${PORT}"
 
 TARGET_NGINX_CONF="/etc/nginx/http.d/default.conf"
 if [ ! -f "$TARGET_NGINX_CONF" ]; then
@@ -17,11 +17,11 @@ fi
 if [ -f "$TARGET_NGINX_CONF" ]; then
     sed -i "s/PORT_PLACEHOLDER/${PORT}/g" "$TARGET_NGINX_CONF"
 else
-    echo "Warning: Nginx configuration file not found at ${TARGET_NGINX_CONF}."
+    echo "Notice: Default Nginx configuration file not found at ${TARGET_NGINX_CONF}."
 fi
 
-# 2. Storage and cache directory permissions
-echo "==> Preparing storage directories & permissions..."
+# 2. Storage and Cache Directory Permissions
+echo "==> Setting up storage directories and file permissions..."
 mkdir -p /var/www/html/storage/framework/cache/data \
          /var/www/html/storage/framework/sessions \
          /var/www/html/storage/framework/views \
@@ -32,52 +32,59 @@ mkdir -p /var/www/html/storage/framework/cache/data \
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 3. Create Storage Symlink
-echo "==> Creating storage symlink..."
+# 3. Ensure Storage Public Symlink
+echo "==> Ensuring public storage symlink exists..."
 php artisan storage:link --force || true
 
-# 4. Execute Database Migrations Safely
-if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
-    echo "==> Checking database connection and running pending migrations..."
-    MAX_TRIES=10
-    COUNT=0
-    MIGRATED=0
+# 4. Check for APP_KEY (Generate if missing)
+if [ -z "$APP_KEY" ]; then
+    echo "==> APP_KEY not detected, generating application encryption key..."
+    php artisan key:generate --force || true
+fi
 
-    while [ $COUNT -lt $MAX_TRIES ]; do
-        COUNT=$((COUNT + 1))
-        echo "--> Attempting migration run ($COUNT/$MAX_TRIES)..."
-        if php artisan migrate --force; then
-            echo "--> Database migrations completed successfully."
-            MIGRATED=1
-            break
-        fi
-        echo "--> Database connection unavailable yet. Retrying in 3 seconds..."
-        sleep 3
-    done
+# 5. Automatically Run Database Migrations
+echo "==> Automatically running database migrations: php artisan migrate --force"
+MAX_TRIES=10
+COUNT=0
+MIGRATED=0
 
-    if [ $MIGRATED -eq 0 ]; then
-        echo "ERROR: Failed to run database migrations after $MAX_TRIES attempts."
-        # If strict database check is not disabled, fail fast
-        if [ "${FAIL_ON_MIGRATION_ERROR:-false}" = "true" ]; then
-            exit 1
-        fi
+while [ $COUNT -lt $MAX_TRIES ]; do
+    COUNT=$((COUNT + 1))
+    echo "--> Running php artisan migrate --force (Attempt $COUNT/$MAX_TRIES)..."
+    if php artisan migrate --force; then
+        echo "--> Database migrations completed successfully."
+        MIGRATED=1
+        break
+    fi
+    echo "--> Database connection unavailable or initializing. Retrying in 3 seconds..."
+    sleep 3
+done
+
+if [ $MIGRATED -eq 0 ]; then
+    echo "WARNING: Migrations could not be applied automatically after $MAX_TRIES attempts."
+    if [ "${FAIL_ON_MIGRATION_ERROR:-false}" = "true" ]; then
+        exit 1
     fi
 fi
 
-# 5. Optional Auto-Seeder on First Boot
+# 6. Optional Database Seeder (if RUN_SEEDER=true)
 if [ "${RUN_SEEDER:-false}" = "true" ]; then
-    echo "==> Seeding database..."
+    echo "==> Seeding database (RUN_SEEDER=true)..."
     php artisan db:seed --force || echo "Warning: Seed command encountered non-fatal error."
 fi
 
-# 6. Framework Caching for Maximum Performance
+# 7. Framework Caching for Production Optimization
 if [ "${APP_ENV:-production}" = "production" ]; then
     echo "==> Caching Laravel configuration, routes, and views..."
-    php artisan config:cache
-    php artisan route:cache
-    php artisan view:cache
+    php artisan config:cache || true
+    php artisan route:cache || true
+    php artisan view:cache || true
 fi
 
-echo "==> Application initialized successfully. Starting Supervisord..."
-exec "$@"
-
+# 8. Smooth Startup: Launch Supervisord (Nginx + PHP-FPM) or User CMD
+echo "==> Application initialized successfully. Starting Web Server..."
+if [ "$#" -eq 0 ]; then
+    exec /usr/bin/supervisord -c /etc/supervisord.conf
+else
+    exec "$@"
+fi

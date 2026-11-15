@@ -86,13 +86,17 @@ RUN mkdir -p /var/www/html/storage/framework/cache/data \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Copy entrypoint script and set executable permissions
+# Copy entrypoint script, strip any Windows CRLF endings, and set executable permissions
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh \
+    && chmod +x /usr/local/bin/entrypoint.sh
 
-# Expose HTTP port (Render will dynamically supply $PORT at runtime)
+# Expose HTTP port (Render / Cloud dynamic $PORT)
 EXPOSE 80 10000
 
+# Container Startup:
+# 1. Entrypoint automatically runs database migrations: `php artisan migrate --force`
+# 2. CMD starts Supervisord to smoothly run Nginx and PHP-FPM in production
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
