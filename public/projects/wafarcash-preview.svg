@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="wafarBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e0f14"/>
+      <stop offset="50%" stop-color="#080a0f"/>
+      <stop offset="100%" stop-color="#030407"/>
+    </linearGradient>
+    <linearGradient id="goldLuxe" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff2a8"/>
+      <stop offset="40%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8a6311"/>
+    </linearGradient>
+    <linearGradient id="emeraldBar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="380" rx="16" fill="url(#wafarBg)"/>
+  <rect width="600" height="380" rx="16" fill="none" stroke="rgba(212, 175, 55, 0.3)" stroke-width="1.5"/>
+
+  <!-- Gold Ribbon Badge for Award -->
+  <g transform="translate(420, 25)">
+    <rect width="155" height="32" rx="6" fill="rgba(212, 175, 55, 0.15)" stroke="#d4af37" stroke-width="1"/>
+    <text x="12" y="21" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="bold" fill="#fde047">🏆 1ST PLACE AWARD</text>
+  </g>
+
+  <!-- Title bar -->
+  <rect x="25" y="25" width="220" height="32" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)"/>
+  <text x="40" y="46" font-family="'Space Grotesk', sans-serif" font-size="12" font-weight="bold" fill="#ffffff" letter-spacing="1">WAFARCASH // ANALYTICS 3D</text>
+
+  <!-- 3D Perspective Volumetric Graph Floor -->
+  <g transform="translate(60, 100)">
+    <!-- Main Card Box -->
+    <rect width="480" height="230" rx="14" fill="rgba(15, 20, 30, 0.7)" stroke="rgba(212, 175, 55, 0.25)" stroke-width="1"/>
+
+    <!-- Total Portfolio Balance Display -->
+    <text x="35" y="45" font-family="'Space Grotesk', sans-serif" font-size="11" fill="#a0aec0">TOTAL CASH FLOW MONITORED</text>
+    <text x="35" y="80" font-family="'Space Grotesk', sans-serif" font-size="32" font-weight="900" fill="url(#goldLuxe)">$ 1,248,950.00</text>
+    <text x="290" y="78" font-family="'Space Grotesk', sans-serif" font-size="12" fill="#10b981" font-weight="bold">↑ +24.8% vs last qtr</text>
+
+    <!-- 3D Isometric / Volumetric Pillars -->
+    <!-- Pillar 1 -->
+    <polygon points="60,190 75,180 95,180 80,190" fill="#fef08a"/>
+    <polygon points="60,190 80,190 80,140 60,140" fill="#ca8a04"/>
+    <polygon points="80,190 95,180 95,130 80,140" fill="#a16207"/>
+
+    <!-- Pillar 2 -->
+    <polygon points="120,190 135,180 155,180 140,190" fill="#fef08a"/>
+    <polygon points="120,190 140,190 140,110 120,110" fill="#eab308"/>
+    <polygon points="140,190 155,180 155,100 140,110" fill="#ca8a04"/>
+
+    <!-- Pillar 3 (Highest) -->
+    <polygon points="180,190 195,180 215,180 200,190" fill="#ffffff" filter="url(#goldGlow)"/>
+    <polygon points="180,190 200,190 200,75 180,75" fill="url(#goldLuxe)"/>
+    <polygon points="200,190 215,180 215,65 200,75" fill="#ca8a04"/>
+
+    <!-- Pillar 4 -->
+    <polygon points="240,190 255,180 275,180 260,190" fill="#fef08a"/>
+    <polygon points="240,190 260,190 260,95 240,95" fill="#eab308"/>
+    <polygon points="260,190 275,180 275,85 260,95" fill="#a16207"/>
+
+    <!-- Pillar 5 -->
+    <polygon points="300,190 315,180 335,180 320,190" fill="#fef08a"/>
+    <polygon points="300,190 320,190 320,60 300,60" fill="url(#goldLuxe)" filter="url(#goldGlow)"/>
+    <polygon points="320,190 335,180 335,50 320,60" fill="#ca8a04"/>
+
+    <!-- Curved Trend Line over pillars -->
+    <path d="M 70 135 C 130 90, 190 65, 250 85 S 310 45, 420 30" fill="none" stroke="#fde047" stroke-width="3" filter="url(#goldGlow)"/>
+    <circle cx="420" cy="30" r="5" fill="#ffffff" filter="url(#goldGlow)"/>
+
+    <!-- Security Badge Mini -->
+    <g transform="translate(360, 130)">
+      <rect width="90" height="55" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)"/>
+      <text x="12" y="24" font-family="'Space Grotesk', sans-serif" font-size="9" fill="#94a3b8">SECURITY</text>
+      <text x="12" y="44" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="bold" fill="#10b981">A+ ISO</text>
+    </g>
+  </g>
+</svg>
+
