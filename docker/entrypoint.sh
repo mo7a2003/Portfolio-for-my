@@ -95,6 +95,11 @@ if [ "${APP_ENV:-production}" = "production" ]; then
     php artisan view:cache || true
 fi
 
+# Ensure absolute ownership and permissions for storage and bootstrap cache before web server starts
+echo "==> Finalizing storage and cache permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # 9. Smooth Startup: Launch Supervisord (Nginx + PHP-FPM) or User CMD
 echo "==> Application initialized successfully. Starting Web Server..."
 if [ "$#" -eq 0 ]; then
