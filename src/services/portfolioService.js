@@ -1,20 +1,26 @@
-import apiClient, { API_BASE_URL } from './apiClient'
+import apiClient, { API_BASE_URL, BACKEND_ORIGIN } from './apiClient'
 import { personalInfo, projects as defaultProjects, skills as defaultSkills, defaultCertificates, defaultSocialLinks } from '../data/portfolioData'
 import { profileState, setProfileState, resolveProfileAvatar, resolveProfilePortrait } from './profileState'
 
-// Resolve backend asset origin (e.g. http://127.0.0.1:8000/api -> http://127.0.0.1:8000)
-const BACKEND_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '')
-
 export function resolveAssetUrl(url) {
   if (!url || typeof url !== 'string') return ''
-  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:')) {
-    return url
+  let trimmed = url.trim()
+  if (!trimmed) return ''
+
+  // Rewrite any lingering localhost / 127.0.0.1 backend URLs to the production Render origin
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(trimmed)) {
+    trimmed = trimmed.replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i, BACKEND_ORIGIN)
   }
-  if (url.startsWith('/storage/') || url.startsWith('storage/')) {
-    const clean = url.startsWith('/') ? url : `/${url}`
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed
+  }
+  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/') || trimmed.startsWith('public/')) {
+    const normalizedPath = trimmed.replace(/^public\//, 'storage/')
+    const clean = normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`
     return `${BACKEND_ORIGIN}${clean}`
   }
-  return url
+  return trimmed
 }
 
 /**

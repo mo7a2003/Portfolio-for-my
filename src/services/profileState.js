@@ -1,13 +1,17 @@
 import { reactive } from 'vue'
 import { personalInfo } from '../data/portfolioData'
-import { API_BASE_URL } from './apiClient'
-
-const BACKEND_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '')
+import { BACKEND_ORIGIN } from './apiClient'
 
 export function resolveProfileAssetUrl(url) {
   if (!url || typeof url !== 'string') return ''
-  const trimmed = url.trim()
+  let trimmed = url.trim()
   if (!trimmed) return ''
+
+  // Rewrite any lingering localhost / 127.0.0.1 backend URLs to the production Render origin
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(trimmed)) {
+    trimmed = trimmed.replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i, BACKEND_ORIGIN)
+  }
+
   if (
     trimmed.startsWith('http://') ||
     trimmed.startsWith('https://') ||
@@ -16,8 +20,9 @@ export function resolveProfileAssetUrl(url) {
   ) {
     return trimmed
   }
-  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/')) {
-    const clean = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  if (trimmed.startsWith('/storage/') || trimmed.startsWith('storage/') || trimmed.startsWith('public/')) {
+    const normalizedPath = trimmed.replace(/^public\//, 'storage/')
+    const clean = normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`
     return `${BACKEND_ORIGIN}${clean}`
   }
   return trimmed

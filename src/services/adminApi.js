@@ -1,4 +1,4 @@
-import apiClient from './apiClient'
+import apiClient, { BACKEND_ORIGIN } from './apiClient'
 import { extractArray, normalizeProject, normalizeSkill, resolveAssetUrl } from './portfolioService'
 import { defaultCertificates, defaultSocialLinks, personalInfo } from '../data/portfolioData'
 import { profileState, setProfileState, resolveProfileAvatar, resolveProfilePortrait } from './profileState'
@@ -1020,7 +1020,7 @@ export const adminApi = {
       if ((err.status === 422 || err.response?.status === 422) && err.response?.data?.errors) {
         const errors = err.response.data.errors
         const retryPayload = { ...payload }
-        const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'
+        const origin = typeof window !== 'undefined' ? window.location.origin : BACKEND_ORIGIN
 
         for (const [field, messages] of Object.entries(errors)) {
           const msgText = (Array.isArray(messages) ? messages.join(' ') : String(messages)).toLowerCase()

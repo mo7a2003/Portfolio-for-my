@@ -1,13 +1,14 @@
 import axios from 'axios'
 
 // Resolve and normalize VITE_API_BASE_URL (ensuring no trailing slash issues)
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://portfolio-for-my.onrender.com/api'
 export const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '')
+export const BACKEND_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '')
 
 // Create configured Axios client instance
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
