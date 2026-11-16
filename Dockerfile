@@ -75,16 +75,19 @@ COPY --from=vendor /app/vendor /var/www/html/vendor
 # Copy entire application codebase
 COPY . /var/www/html
 
-# Prepare storage, logs, and cache directories
+# Prepare storage, database, logs, and cache directories
 RUN mkdir -p /var/www/html/storage/framework/cache/data \
              /var/www/html/storage/framework/sessions \
              /var/www/html/storage/framework/views \
              /var/www/html/storage/logs \
              /var/www/html/storage/app/public \
              /var/www/html/bootstrap/cache \
+             /var/www/html/database \
              /var/run/nginx \
+    && touch /var/www/html/database/database.sqlite \
     && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 777 /var/www/html/database
 
 # Copy entrypoint script, strip any Windows CRLF endings, and set executable permissions
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

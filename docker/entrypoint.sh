@@ -5,7 +5,7 @@ echo "=========================================================="
 echo " Starting Laravel 11 Production Runtime"
 echo "=========================================================="
 
-# 1. Dynamic Port Binding for Render / Cloud Hosts
+# 1. Dynamic Port Binding for Render / Railway / Cloud Hosts
 PORT="${PORT:-80}"
 echo "==> Configuring port binding: ${PORT}"
 
@@ -20,17 +20,25 @@ else
     echo "Notice: Default Nginx configuration file not found at ${TARGET_NGINX_CONF}."
 fi
 
-# 2. Storage and Cache Directory Permissions
-echo "==> Setting up storage directories and file permissions..."
+# 2. Storage, Cache, and SQLite Database Directory Permissions
+echo "==> Setting up storage and database directory permissions..."
 mkdir -p /var/www/html/storage/framework/cache/data \
          /var/www/html/storage/framework/sessions \
          /var/www/html/storage/framework/views \
          /var/www/html/storage/logs \
          /var/www/html/storage/app/public \
-         /var/www/html/bootstrap/cache
+         /var/www/html/bootstrap/cache \
+         /var/www/html/database
 
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# If SQLite is used or present, ensure full write permissions for www-data
+if [ ! -f /var/www/html/database/database.sqlite ]; then
+    touch /var/www/html/database/database.sqlite
+fi
+chmod -R 777 /var/www/html/database
+chown -R www-data:www-data /var/www/html/database
 
 # 3. Ensure Storage Public Symlink
 echo "==> Ensuring public storage symlink exists..."
@@ -67,13 +75,19 @@ if [ $MIGRATED -eq 0 ]; then
     fi
 fi
 
-# 6. Optional Database Seeder (if RUN_SEEDER=true)
+# 6. Re-apply Permissions on Database (prevents 'readonly database' in SQLite)
+chown -R www-data:www-data /var/www/html/database
+chmod -R 777 /var/www/html/database
+
+# 7. Optional Database Seeder (if RUN_SEEDER=true)
 if [ "${RUN_SEEDER:-false}" = "true" ]; then
     echo "==> Seeding database (RUN_SEEDER=true)..."
     php artisan db:seed --force || echo "Warning: Seed command encountered non-fatal error."
+    chown -R www-data:www-data /var/www/html/database
+    chmod -R 777 /var/www/html/database
 fi
 
-# 7. Framework Caching for Production Optimization
+# 8. Framework Caching for Production Optimization
 if [ "${APP_ENV:-production}" = "production" ]; then
     echo "==> Caching Laravel configuration, routes, and views..."
     php artisan config:cache || true
@@ -81,7 +95,7 @@ if [ "${APP_ENV:-production}" = "production" ]; then
     php artisan view:cache || true
 fi
 
-# 8. Smooth Startup: Launch Supervisord (Nginx + PHP-FPM) or User CMD
+# 9. Smooth Startup: Launch Supervisord (Nginx + PHP-FPM) or User CMD
 echo "==> Application initialized successfully. Starting Web Server..."
 if [ "$#" -eq 0 ]; then
     exec /usr/bin/supervisord -c /etc/supervisord.conf
