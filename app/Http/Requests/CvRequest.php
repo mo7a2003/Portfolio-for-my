@@ -64,10 +64,10 @@ class CvRequest extends FormRequest
                 $isCreate ? 'required' : 'nullable',
                 'file',
                 'mimes:pdf,doc,docx',
-                'max:20480', // Max 20MB
+                'max:30720', // Max 30MB
             ],
-            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
-            'document' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:30720'],
+            'document' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:30720'],
             'is_active' => ['nullable', 'boolean'],
             'isActive' => ['nullable', 'boolean'],
         ];

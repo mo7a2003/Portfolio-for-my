@@ -15,8 +15,8 @@ class MediaUploadController extends Controller
     public function upload(Request $request): JsonResponse
     {
         $request->validate([
-            'image' => ['required_without:file', 'nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:10240'],
-            'file' => ['required_without:image', 'nullable', 'file', 'mimes:jpeg,png,jpg,webp,gif,svg,pdf', 'max:25600'],
+            'image' => ['required_without:file', 'nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:25600'],
+            'file' => ['required_without:image', 'nullable', 'file', 'mimes:jpeg,png,jpg,webp,gif,svg,pdf', 'max:30720'],
             'folder' => ['nullable', 'string', 'max:50'],
         ]);
 
