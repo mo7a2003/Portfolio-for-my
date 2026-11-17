@@ -337,7 +337,28 @@ export const portfolioService = {
         ...(typeof apiProfile === 'object' ? apiProfile : {})
       }
 
-      // Preserve custom uploaded portrait/avatar from admin cache if public endpoint only returned default placeholders
+      // Preserve custom uploaded portrait/avatar and user-edited milestones/philosophy from admin cache if public endpoint omitted them
+      if (Array.isArray(cachedProfile?.milestones) && cachedProfile.milestones.length) {
+        const apiMs = Array.isArray(apiProfile?.milestones) ? apiProfile.milestones : (Array.isArray(apiProfile?.timeline) ? apiProfile.timeline : null)
+        if (!apiMs || !apiMs.length) {
+          mergedProfile.milestones = cachedProfile.milestones
+          mergedProfile.timeline = cachedProfile.milestones
+        } else {
+          mergedProfile.milestones = apiMs.map((m, idx) => {
+            const c = cachedProfile.milestones.find((cm) => (cm.id && m.id && String(cm.id) === String(m.id)) || (cm.title && m.title && cm.title === m.title)) || cachedProfile.milestones[idx] || {}
+            const periodVal = m.period || m.year || m.date || m.time_frame || c.period || c.year || ''
+            return {
+              ...c,
+              ...m,
+              period: periodVal,
+              year: periodVal,
+              date: periodVal,
+              company: m.company || m.organization || m.subtitle || c.company || ''
+            }
+          })
+          mergedProfile.timeline = mergedProfile.milestones
+        }
+      }
       const defaultAssets = ['/mohammed-portrait.png', '/developer-portrait.jpg', '/mohammed-avatar.jpg']
       const apiPortrait = apiProfile?.portrait_url || apiProfile?.portrait_image || apiProfile?.portrait
       const cachedPortrait = cachedProfile?.portrait_url || cachedProfile?.portrait_image || cachedProfile?.portrait

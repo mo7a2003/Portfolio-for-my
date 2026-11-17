@@ -785,6 +785,80 @@ export const adminApi = {
   // ==========================================
   // 7. Profile Settings (Admin\ProfileController)
   // ==========================================
+  normalizeMilestoneItem(m = {}, fallback = {}, idx = 0) {
+    if (!m || typeof m !== 'object') return fallback
+    const periodVal = String(
+      m.period ||
+      m.year ||
+      m.date ||
+      m.time_frame ||
+      m.timeframe ||
+      m.duration ||
+      fallback?.period ||
+      fallback?.year ||
+      fallback?.date ||
+      ''
+    ).trim()
+
+    const companyVal = String(
+      m.company ??
+      m.organization ??
+      m.subtitle ??
+      m.issuer ??
+      fallback?.company ??
+      fallback?.organization ??
+      ''
+    ).trim()
+
+    return {
+      ...fallback,
+      ...m,
+      id: m.id || fallback?.id || `ms_${idx + 1}`,
+      title: String(m.title ?? fallback?.title ?? '').trim(),
+      period: periodVal,
+      year: periodVal,
+      date: periodVal,
+      time_frame: periodVal,
+      timeframe: periodVal,
+      duration: periodVal,
+      company: companyVal,
+      organization: companyVal,
+      subtitle: companyVal,
+      description: String(m.description ?? fallback?.description ?? '').trim(),
+      color: m.color || fallback?.color || '#d4af37',
+      badge: m.badge !== undefined ? m.badge : (fallback?.badge ?? null)
+    }
+  },
+
+  normalizeMilestonesList(rawList, cachedList = []) {
+    const parseArr = (val) => {
+      if (Array.isArray(val) && val.length > 0) return val
+      if (typeof val === 'string' && val.trim().startsWith('[')) {
+        try {
+          const parsed = JSON.parse(val)
+          if (Array.isArray(parsed)) return parsed
+        } catch {}
+      }
+      return null
+    }
+
+    const primary = parseArr(rawList)
+    const fallbackArr = parseArr(cachedList) || []
+
+    if (!primary && fallbackArr.length > 0) {
+      return fallbackArr.map((item, idx) => this.normalizeMilestoneItem(item, {}, idx))
+    }
+    if (!primary) return undefined
+
+    return primary.map((item, idx) => {
+      const match =
+        fallbackArr.find((c) => (c.id && item.id && String(c.id) === String(item.id)) || (c.title && item.title && c.title === item.title)) ||
+        fallbackArr[idx] ||
+        {}
+      return this.normalizeMilestoneItem(item, match, idx)
+    })
+  },
+
   normalizeProfileObject(raw = {}) {
     const data = raw?.data?.profile || raw?.profile || raw?.data || raw || {}
     let cached = {}
@@ -819,6 +893,11 @@ export const adminApi = {
     const avatar = resolveProfileAvatar(base)
     const portrait = resolveProfilePortrait(base)
     const timelineHeader = base.timelineHeader || base.timeline_header || '2019 — Present'
+
+    // If cached has user-edited milestones and raw data comes from GET /admin/profile where period might have been stripped, merge carefully
+    const cachedMilestones = cached?.milestones || cached?.timeline || []
+    const incomingMilestones = data?.milestones || data?.timeline || base.milestones || base.timeline
+    const normalizedMilestones = this.normalizeMilestonesList(incomingMilestones, cachedMilestones)
 
     return {
       ...base,
@@ -855,8 +934,8 @@ export const adminApi = {
       philosophy: parseJsonArray(base.philosophy, undefined),
       metrics: parseJsonArray(base.metrics || base.about_metrics, undefined),
       about_metrics: parseJsonArray(base.about_metrics || base.metrics, undefined),
-      milestones: parseJsonArray(base.milestones || base.timeline, undefined),
-      timeline: parseJsonArray(base.timeline || base.milestones, undefined),
+      milestones: normalizedMilestones,
+      timeline: normalizedMilestones,
       stats: parseJsonArray(base.stats, personalInfo.stats),
       cv: base.cv || base.cv_url || null,
       cv_url: base.cv_url || base.cv || null,
@@ -935,9 +1014,11 @@ export const adminApi = {
       payload.about_metrics = m
     }
     if (profileData.milestones !== undefined || profileData.timeline !== undefined || merged.milestones !== undefined) {
-      const ms = profileData.milestones ?? profileData.timeline ?? merged.milestones
-      payload.milestones = ms
-      payload.timeline = ms
+      const rawMs = profileData.milestones ?? profileData.timeline ?? merged.milestones
+      const normalizedMs = this.normalizeMilestonesList(rawMs, existing?.milestones || [])
+      payload.milestones = normalizedMs
+      payload.timeline = normalizedMs
+      payload.career_milestones = normalizedMs
     }
     if (profileData.stats !== undefined || merged.stats !== undefined) {
       payload.stats = profileData.stats ?? merged.stats
@@ -1053,9 +1134,16 @@ export const adminApi = {
 
     const finalNormalized = this.normalizeProfileObject({
       ...existing,
-      ...payload,
       ...(typeof saved === 'object' ? saved : {}),
-      // Preserve explicit image updates if backend response didn't echo custom columns
+      ...payload,
+      // Explicitly preserve user-submitted milestones, philosophy, metrics, and images so backend mass-assignment never strips period/year
+      milestones: payload.milestones ?? saved?.milestones ?? existing?.milestones,
+      timeline: payload.timeline ?? saved?.timeline ?? existing?.timeline,
+      philosophy: payload.philosophy ?? saved?.philosophy ?? existing?.philosophy,
+      metrics: payload.metrics ?? saved?.metrics ?? existing?.metrics,
+      about_metrics: payload.about_metrics ?? saved?.about_metrics ?? existing?.about_metrics,
+      timelineHeader: payload.timelineHeader || saved?.timeline_header || existing?.timelineHeader,
+      timeline_header: payload.timeline_header || saved?.timeline_header || existing?.timeline_header,
       portrait: saved?.portrait_url || saved?.portrait_image || saved?.portrait || payload.portrait,
       avatar: saved?.avatar_url || saved?.avatar || payload.avatar
     })

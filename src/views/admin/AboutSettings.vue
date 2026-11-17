@@ -421,7 +421,7 @@
                       color: m.color || '#d4af37' 
                     }"
                   >
-                    {{ m.period }}
+                    {{ m.period || m.year || m.date || m.time_frame }}
                   </span>
                   <span v-if="m.badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
                     {{ m.badge }}
@@ -858,7 +858,13 @@ const loadAboutData = async () => {
         form.value.metrics = res.metrics || res.about_metrics
       }
       if (Array.isArray(res.milestones || res.timeline) && (res.milestones || res.timeline).length) {
-        form.value.milestones = res.milestones || res.timeline
+        form.value.milestones = (res.milestones || res.timeline).map((m, idx) => ({
+          ...m,
+          id: m.id || `ms_${idx + 1}`,
+          period: m.period || m.year || m.date || m.time_frame || m.duration || '',
+          year: m.period || m.year || m.date || m.time_frame || m.duration || '',
+          company: m.company || m.organization || m.subtitle || ''
+        }))
       }
     }
   } catch (err) {
@@ -912,9 +918,12 @@ const removeMetric = (idx) => {
 // Milestones management
 const openAddMilestoneModal = () => {
   editingMilestoneIndex.value = null
+  const defaultPeriod = new Date().getFullYear().toString() + ' — Present'
   milestoneForm.value = {
     title: '',
-    period: new Date().getFullYear().toString() + ' — Present',
+    period: defaultPeriod,
+    year: defaultPeriod,
+    date: defaultPeriod,
     company: '',
     description: '',
     color: '#d4af37',
@@ -925,36 +934,70 @@ const openAddMilestoneModal = () => {
 
 const openEditMilestoneModal = (milestone, idx) => {
   editingMilestoneIndex.value = idx
-  milestoneForm.value = { ...milestone }
+  const periodVal = milestone.period || milestone.year || milestone.date || milestone.time_frame || milestone.duration || ''
+  const companyVal = milestone.company || milestone.organization || milestone.subtitle || ''
+  milestoneForm.value = {
+    ...milestone,
+    period: periodVal,
+    year: periodVal,
+    date: periodVal,
+    company: companyVal
+  }
   isMilestoneModalOpen.value = true
 }
 
-const saveMilestoneModal = () => {
-  if (editingMilestoneIndex.value !== null) {
-    form.value.milestones[editingMilestoneIndex.value] = { ...milestoneForm.value }
-  } else {
-    form.value.milestones.unshift({
-      id: `ms_${Date.now()}`,
-      ...milestoneForm.value
-    })
+const saveMilestoneModal = async () => {
+  const periodVal = String(milestoneForm.value.period || milestoneForm.value.year || milestoneForm.value.date || '').trim()
+  const companyVal = String(milestoneForm.value.company || milestoneForm.value.organization || milestoneForm.value.subtitle || '').trim()
+
+  const normalizedEntry = {
+    ...milestoneForm.value,
+    id: milestoneForm.value.id || `ms_${Date.now()}`,
+    title: String(milestoneForm.value.title || '').trim(),
+    period: periodVal,
+    year: periodVal,
+    date: periodVal,
+    time_frame: periodVal,
+    duration: periodVal,
+    company: companyVal,
+    organization: companyVal,
+    subtitle: companyVal,
+    description: String(milestoneForm.value.description || '').trim(),
+    color: milestoneForm.value.color || '#d4af37',
+    badge: milestoneForm.value.badge || ''
   }
+
+  if (editingMilestoneIndex.value !== null) {
+    form.value.milestones.splice(editingMilestoneIndex.value, 1, normalizedEntry)
+  } else {
+    form.value.milestones.unshift(normalizedEntry)
+  }
+
   isMilestoneModalOpen.value = false
+  notifySync()
+  await saveAll()
 }
 
-const removeMilestone = (idx) => {
+const removeMilestone = async (idx) => {
   form.value.milestones.splice(idx, 1)
+  notifySync()
+  await saveAll()
 }
 
-const moveMilestoneUp = (idx) => {
+const moveMilestoneUp = async (idx) => {
   if (idx <= 0) return
   const item = form.value.milestones.splice(idx, 1)[0]
   form.value.milestones.splice(idx - 1, 0, item)
+  notifySync()
+  await saveAll()
 }
 
-const moveMilestoneDown = (idx) => {
+const moveMilestoneDown = async (idx) => {
   if (idx >= form.value.milestones.length - 1) return
   const item = form.value.milestones.splice(idx, 1)[0]
   form.value.milestones.splice(idx + 1, 0, item)
+  notifySync()
+  await saveAll()
 }
 
 // Save All changes to backend API
@@ -979,6 +1022,28 @@ const saveAll = async () => {
       }
     }
 
+    const normalizedMilestones = (form.value.milestones || []).map((m, idx) => {
+      const periodVal = String(m.period || m.year || m.date || m.time_frame || m.duration || '').trim()
+      const companyVal = String(m.company || m.organization || m.subtitle || '').trim()
+      return {
+        ...m,
+        id: m.id || `ms_${idx + 1}`,
+        title: String(m.title || '').trim(),
+        period: periodVal,
+        year: periodVal,
+        date: periodVal,
+        time_frame: periodVal,
+        duration: periodVal,
+        company: companyVal,
+        organization: companyVal,
+        subtitle: companyVal,
+        description: String(m.description || '').trim(),
+        color: m.color || '#d4af37',
+        badge: m.badge || ''
+      }
+    })
+    form.value.milestones = normalizedMilestones
+
     const payload = {
       name: form.value.name || personalInfo.name,
       nameAr: form.value.nameAr || personalInfo.nameAr,
@@ -1001,8 +1066,9 @@ const saveAll = async () => {
       philosophy: form.value.philosophy,
       metrics: form.value.metrics,
       about_metrics: form.value.metrics,
-      milestones: form.value.milestones,
-      timeline: form.value.milestones
+      milestones: normalizedMilestones,
+      timeline: normalizedMilestones,
+      career_milestones: normalizedMilestones
     }
 
     const res = await adminApi.updateProfile(payload)

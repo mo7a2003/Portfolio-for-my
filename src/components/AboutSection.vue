@@ -202,16 +202,16 @@
                         color: m.color || '#f59e0b'
                       }"
                     >
-                      {{ m.period }}
+                      {{ m.period || m.year || m.date || m.time_frame }}
                     </span>
                   </div>
 
                   <p 
-                    v-if="m.company" 
+                    v-if="m.company || m.organization || m.subtitle" 
                     class="text-xs font-mono mb-2"
                     :style="{ color: m.color === '#d4af37' ? '#00f2fe' : (m.color || '#f59e0b') }"
                   >
-                    {{ m.company }}
+                    {{ m.company || m.organization || m.subtitle }}
                   </p>
 
                   <p class="text-xs sm:text-sm text-slate-300/85 leading-relaxed">
