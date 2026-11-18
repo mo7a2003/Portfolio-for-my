@@ -57,6 +57,27 @@ class ArticleRequest extends FormRequest
             $mergeData['published_at'] = ! empty($publishedAt) ? $publishedAt : null;
         }
 
+        // Arabic translations
+        $titleAr = $this->input('title_ar') ?? $this->input('titleAr');
+        if ($titleAr !== null) {
+            $mergeData['title_ar'] = $titleAr;
+        }
+
+        $excerptAr = $this->input('excerpt_ar') ?? $this->input('excerptAr');
+        if ($excerptAr !== null) {
+            $mergeData['excerpt_ar'] = $excerptAr;
+        }
+
+        $contentAr = $this->input('content_ar') ?? $this->input('contentAr');
+        if ($contentAr !== null) {
+            $mergeData['content_ar'] = $contentAr;
+        }
+
+        $categoryAr = $this->input('category_ar') ?? $this->input('categoryAr');
+        if ($categoryAr !== null) {
+            $mergeData['category_ar'] = $categoryAr;
+        }
+
         if (! empty($mergeData)) {
             $this->merge($mergeData);
         }
@@ -91,8 +112,17 @@ class ArticleRequest extends FormRequest
             'readTime' => ['nullable', 'string', 'max:50'],
             'is_published' => ['nullable', 'boolean'],
             'isPublished' => ['nullable', 'boolean'],
-            'published_at' => ['nullable', 'date'],
-            'publishedAt' => ['nullable', 'date'],
+            'published_at' => ['nullable'],
+            'publishedAt' => ['nullable'],
+            // Arabic Translation fields
+            'title_ar' => ['nullable', 'string', 'max:250'],
+            'titleAr' => ['nullable', 'string', 'max:250'],
+            'excerpt_ar' => ['nullable', 'string'],
+            'excerptAr' => ['nullable', 'string'],
+            'content_ar' => ['nullable', 'string'],
+            'contentAr' => ['nullable', 'string'],
+            'category_ar' => ['nullable', 'string', 'max:100'],
+            'categoryAr' => ['nullable', 'string', 'max:100'],
         ];
     }
 }

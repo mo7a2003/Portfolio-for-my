@@ -100,6 +100,47 @@ class ProfileRequest extends FormRequest
             $mergeData['education'] = $education;
         }
 
+        // 13. Arabic fields & birth date
+        $fullNameAr = $this->input('full_name_ar') ?? $this->input('fullNameAr') ?? $this->input('name_ar') ?? $this->input('nameAr');
+        if ($fullNameAr !== null) {
+            $mergeData['full_name_ar'] = $fullNameAr;
+        }
+
+        $titleAr = $this->input('title_ar') ?? $this->input('titleAr') ?? $this->input('role_ar') ?? $this->input('roleAr');
+        if ($titleAr !== null) {
+            $mergeData['title_ar'] = $titleAr;
+        }
+
+        $bioAr = $this->input('bio_ar') ?? $this->input('bioAr') ?? $this->input('about_ar') ?? $this->input('aboutAr');
+        if ($bioAr !== null) {
+            $mergeData['bio_ar'] = $bioAr;
+        }
+
+        $detailedBioAr = $this->input('detailed_bio_ar') ?? $this->input('detailedBioAr');
+        if ($detailedBioAr !== null) {
+            $mergeData['detailed_bio_ar'] = $detailedBioAr;
+        }
+
+        $educationAr = $this->input('education_ar') ?? $this->input('educationAr');
+        if ($educationAr !== null) {
+            $mergeData['education_ar'] = $educationAr;
+        }
+
+        $milestonesAr = $this->input('milestones_ar') ?? $this->input('milestonesAr');
+        if (is_string($milestonesAr)) {
+            $decoded = json_decode($milestonesAr, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $mergeData['milestones_ar'] = $decoded;
+            }
+        } elseif (is_array($milestonesAr)) {
+            $mergeData['milestones_ar'] = $milestonesAr;
+        }
+
+        $birthDate = $this->input('birth_date') ?? $this->input('birthDate');
+        if ($birthDate !== null) {
+            $mergeData['birth_date'] = $birthDate;
+        }
+
         if (! empty($mergeData)) {
             $this->merge($mergeData);
         }
@@ -137,6 +178,25 @@ class ProfileRequest extends FormRequest
             'phoneNumber' => ['nullable', 'string', 'max:50'],
             'availability_status' => ['nullable', 'string', 'max:50'],
             'availability' => ['nullable', 'string', 'max:50'],
+            // Arabic Translation & Date fields
+            'full_name_ar' => ['nullable', 'string', 'max:150'],
+            'fullNameAr' => ['nullable', 'string', 'max:150'],
+            'name_ar' => ['nullable', 'string', 'max:150'],
+            'nameAr' => ['nullable', 'string', 'max:150'],
+            'title_ar' => ['nullable', 'string', 'max:150'],
+            'titleAr' => ['nullable', 'string', 'max:150'],
+            'role_ar' => ['nullable', 'string', 'max:150'],
+            'roleAr' => ['nullable', 'string', 'max:150'],
+            'bio_ar' => ['nullable', 'string'],
+            'bioAr' => ['nullable', 'string'],
+            'detailed_bio_ar' => ['nullable', 'string'],
+            'detailedBioAr' => ['nullable', 'string'],
+            'education_ar' => ['nullable', 'string', 'max:255'],
+            'educationAr' => ['nullable', 'string', 'max:255'],
+            'milestones_ar' => ['nullable'],
+            'milestonesAr' => ['nullable'],
+            'birth_date' => ['nullable', 'string', 'max:50'],
+            'birthDate' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

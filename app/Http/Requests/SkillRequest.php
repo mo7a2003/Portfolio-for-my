@@ -61,6 +61,22 @@ class SkillRequest extends FormRequest
             }
         }
 
+        // Arabic translations
+        $nameAr = $this->input('name_ar') ?? $this->input('nameAr');
+        if ($nameAr !== null) {
+            $mergeData['name_ar'] = $nameAr;
+        }
+
+        $catAr = $this->input('category_ar') ?? $this->input('categoryAr');
+        if ($catAr !== null) {
+            $mergeData['category_ar'] = $catAr;
+        }
+
+        $descAr = $this->input('description_ar') ?? $this->input('descriptionAr');
+        if ($descAr !== null) {
+            $mergeData['description_ar'] = $descAr;
+        }
+
         if (! empty($mergeData)) {
             $this->merge($mergeData);
         }
@@ -88,6 +104,13 @@ class SkillRequest extends FormRequest
             'order_index' => ['nullable', 'integer'],
             'order' => ['nullable', 'integer'],
             'orderIndex' => ['nullable', 'integer'],
+            // Arabic Translation fields
+            'name_ar' => ['nullable', 'string', 'max:100'],
+            'nameAr' => ['nullable', 'string', 'max:100'],
+            'category_ar' => ['nullable', 'string', 'max:100'],
+            'categoryAr' => ['nullable', 'string', 'max:100'],
+            'description_ar' => ['nullable', 'string'],
+            'descriptionAr' => ['nullable', 'string'],
         ];
     }
 }

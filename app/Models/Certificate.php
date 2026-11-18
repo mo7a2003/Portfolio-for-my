@@ -36,6 +36,17 @@ class Certificate extends Model
         'is_active',
         'isActive',
         'active',
+        // Arabic Translation & Date fields
+        'title_ar',
+        'titleAr',
+        'issuer_ar',
+        'issuerAr',
+        'description_ar',
+        'descriptionAr',
+        'issue_date',
+        'issueDate',
+        'expiry_date',
+        'expiryDate',
     ];
 
     /**
@@ -48,6 +59,11 @@ class Certificate extends Model
         'verifyUrl',
         'sortOrder',
         'isActive',
+        'titleAr',
+        'issuerAr',
+        'descriptionAr',
+        'issueDate',
+        'expiryDate',
     ];
 
     /**
@@ -173,6 +189,56 @@ class Certificate extends Model
     public function setActiveAttribute(mixed $value): void
     {
         $this->setIsActiveAttribute($value);
+    }
+
+    public function getTitleArAttribute(): ?string
+    {
+        return $this->attributes['title_ar'] ?? null;
+    }
+
+    public function setTitleArAttribute(?string $value): void
+    {
+        $this->attributes['title_ar'] = $value;
+    }
+
+    public function getIssuerArAttribute(): ?string
+    {
+        return $this->attributes['issuer_ar'] ?? null;
+    }
+
+    public function setIssuerArAttribute(?string $value): void
+    {
+        $this->attributes['issuer_ar'] = $value;
+    }
+
+    public function getDescriptionArAttribute(): ?string
+    {
+        return $this->attributes['description_ar'] ?? null;
+    }
+
+    public function setDescriptionArAttribute(?string $value): void
+    {
+        $this->attributes['description_ar'] = $value;
+    }
+
+    public function getIssueDateAttribute(): ?string
+    {
+        return $this->attributes['issue_date'] ?? null;
+    }
+
+    public function setIssueDateAttribute(?string $value): void
+    {
+        $this->attributes['issue_date'] = $value;
+    }
+
+    public function getExpiryDateAttribute(): ?string
+    {
+        return $this->attributes['expiry_date'] ?? null;
+    }
+
+    public function setExpiryDateAttribute(?string $value): void
+    {
+        $this->attributes['expiry_date'] = $value;
     }
 
     /**

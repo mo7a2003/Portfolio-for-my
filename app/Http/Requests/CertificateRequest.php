@@ -98,6 +98,32 @@ class CertificateRequest extends FormRequest
             }
         }
 
+        // Arabic translations & dates
+        $titleAr = $this->input('title_ar') ?? $this->input('titleAr');
+        if ($titleAr !== null) {
+            $mergeData['title_ar'] = $titleAr;
+        }
+
+        $issuerAr = $this->input('issuer_ar') ?? $this->input('issuerAr');
+        if ($issuerAr !== null) {
+            $mergeData['issuer_ar'] = $issuerAr;
+        }
+
+        $descAr = $this->input('description_ar') ?? $this->input('descriptionAr');
+        if ($descAr !== null) {
+            $mergeData['description_ar'] = $descAr;
+        }
+
+        $issueDate = $this->input('issue_date') ?? $this->input('issueDate');
+        if ($issueDate !== null) {
+            $mergeData['issue_date'] = $issueDate;
+        }
+
+        $expiryDate = $this->input('expiry_date') ?? $this->input('expiryDate');
+        if ($expiryDate !== null) {
+            $mergeData['expiry_date'] = $expiryDate;
+        }
+
         if (! empty($mergeData)) {
             $this->merge($mergeData);
         }
@@ -124,6 +150,17 @@ class CertificateRequest extends FormRequest
             'image' => ['nullable'],
             'sort_order' => ['nullable', 'integer'],
             'is_active' => ['nullable', 'boolean'],
+            // Arabic Translation & Date fields
+            'title_ar' => ['nullable', 'string', 'max:150'],
+            'titleAr' => ['nullable', 'string', 'max:150'],
+            'issuer_ar' => ['nullable', 'string', 'max:150'],
+            'issuerAr' => ['nullable', 'string', 'max:150'],
+            'description_ar' => ['nullable', 'string'],
+            'descriptionAr' => ['nullable', 'string'],
+            'issue_date' => ['nullable', 'string', 'max:50'],
+            'issueDate' => ['nullable', 'string', 'max:50'],
+            'expiry_date' => ['nullable', 'string', 'max:50'],
+            'expiryDate' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

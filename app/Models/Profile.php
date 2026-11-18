@@ -43,6 +43,27 @@ class Profile extends Model
         'phoneNumber',
         'availability_status',
         'availabilityStatus',
+        // Arabic Translation & Date fields
+        'full_name_ar',
+        'fullNameAr',
+        'name_ar',
+        'nameAr',
+        'title_ar',
+        'titleAr',
+        'role_ar',
+        'roleAr',
+        'bio_ar',
+        'bioAr',
+        'about_ar',
+        'aboutAr',
+        'detailed_bio_ar',
+        'detailedBioAr',
+        'education_ar',
+        'educationAr',
+        'milestones_ar',
+        'milestonesAr',
+        'birth_date',
+        'birthDate',
     ];
 
     /**
@@ -67,6 +88,13 @@ class Profile extends Model
         'resume',
         'phoneNumber',
         'availabilityStatus',
+        'fullNameAr',
+        'titleAr',
+        'bioAr',
+        'detailedBioAr',
+        'educationAr',
+        'milestonesAr',
+        'birthDate',
     ];
 
     public function getNameAttribute(): ?string
@@ -262,6 +290,113 @@ class Profile extends Model
         $this->attributes['availability_status'] = $value;
     }
 
+    public function getFullNameArAttribute(): ?string
+    {
+        return $this->attributes['full_name_ar'] ?? null;
+    }
+
+    public function setFullNameArAttribute(?string $value): void
+    {
+        $this->attributes['full_name_ar'] = $value;
+    }
+
+    public function getNameArAttribute(): ?string
+    {
+        return $this->attributes['full_name_ar'] ?? null;
+    }
+
+    public function setNameArAttribute(?string $value): void
+    {
+        $this->attributes['full_name_ar'] = $value;
+    }
+
+    public function getTitleArAttribute(): ?string
+    {
+        return $this->attributes['title_ar'] ?? null;
+    }
+
+    public function setTitleArAttribute(?string $value): void
+    {
+        $this->attributes['title_ar'] = $value;
+    }
+
+    public function getRoleArAttribute(): ?string
+    {
+        return $this->attributes['title_ar'] ?? null;
+    }
+
+    public function setRoleArAttribute(?string $value): void
+    {
+        $this->attributes['title_ar'] = $value;
+    }
+
+    public function getBioArAttribute(): ?string
+    {
+        return $this->attributes['bio_ar'] ?? null;
+    }
+
+    public function setBioArAttribute(?string $value): void
+    {
+        $this->attributes['bio_ar'] = $value;
+    }
+
+    public function getAboutArAttribute(): ?string
+    {
+        return $this->attributes['bio_ar'] ?? null;
+    }
+
+    public function setAboutArAttribute(?string $value): void
+    {
+        $this->attributes['bio_ar'] = $value;
+    }
+
+    public function getDetailedBioArAttribute(): ?string
+    {
+        return $this->attributes['detailed_bio_ar'] ?? null;
+    }
+
+    public function setDetailedBioArAttribute(?string $value): void
+    {
+        $this->attributes['detailed_bio_ar'] = $value;
+    }
+
+    public function getEducationArAttribute(): ?string
+    {
+        return $this->attributes['education_ar'] ?? null;
+    }
+
+    public function setEducationArAttribute(?string $value): void
+    {
+        $this->attributes['education_ar'] = $value;
+    }
+
+    public function getMilestonesArAttribute(): mixed
+    {
+        $val = $this->attributes['milestones_ar'] ?? null;
+        if (is_string($val)) {
+            $decoded = json_decode($val, true);
+
+            return json_last_error() === JSON_ERROR_NONE ? $decoded : $val;
+        }
+
+        return $val;
+    }
+
+    public function setMilestonesArAttribute(mixed $value): void
+    {
+        $this->attributes['milestones_ar'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    public function getBirthDateAttribute(): ?string
+    {
+        return $this->attributes['birth_date'] ?? null;
+    }
+
+    public function setBirthDateAttribute(?string $value): void
+    {
+        $this->attributes['birth_date'] = $value;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -273,6 +408,7 @@ class Profile extends Model
             'experience_years' => 'integer',
             'projects_completed' => 'integer',
             'milestones' => 'array',
+            'milestones_ar' => 'array',
         ];
     }
 }

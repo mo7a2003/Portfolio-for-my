@@ -797,4 +797,118 @@ class PortfolioApiTest extends TestCase
         $delResponse->assertStatus(200);
         $this->assertNull(SocialLink::find($linkId));
     }
+
+    /**
+     * Test full lifecycle of Arabic translations and Date fields across all portfolio endpoints.
+     */
+    public function test_it_handles_arabic_translations_and_dates_across_all_endpoints(): void
+    {
+        $token = $this->adminUser->createToken('test_token')->plainTextToken;
+
+        // 1. Profile with Arabic & Dates
+        $profileResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->putJson('/api/admin/profile', [
+                'full_name' => 'Mohammed Alhwaiti',
+                'fullNameAr' => 'محمد الحويطي',
+                'title' => 'Principal Front-End & 3D Web Graphics Architect',
+                'titleAr' => 'مهندس واجهات أمامية ومطور رسومات ثلاثية الأبعاد',
+                'bio' => 'English bio here.',
+                'bioAr' => 'نبذة عربية مختصرة.',
+                'detailedBioAr' => 'نبذة تفصيلية باللغة العربية.',
+                'educationAr' => 'الكلية الجامعية للعلوم التطبيقية',
+                'birthDate' => '2003-05-15',
+                'email' => 'mohamhwaty@gmail.com',
+                'availability_status' => 'available',
+            ]);
+
+        $profileResponse->assertStatus(200)
+            ->assertJsonPath('data.full_name_ar', 'محمد الحويطي')
+            ->assertJsonPath('data.title_ar', 'مهندس واجهات أمامية ومطور رسومات ثلاثية الأبعاد')
+            ->assertJsonPath('data.bio_ar', 'نبذة عربية مختصرة.')
+            ->assertJsonPath('data.detailed_bio_ar', 'نبذة تفصيلية باللغة العربية.')
+            ->assertJsonPath('data.birth_date', '2003-05-15');
+
+        // 2. Project with Arabic & Dates
+        $projectResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/admin/projects', [
+                'title' => 'WafarCash App',
+                'title_ar' => 'وفّر كاش',
+                'subtitle_ar' => 'تطبيق ترويجي ومالي',
+                'description' => 'English description of WafarCash',
+                'description_ar' => 'وصف تفصيلي لتطبيق وفّر كاش الفائز بجائزة عنان',
+                'category' => 'Financial UI',
+                'category_ar' => 'تطبيقات مالية',
+                'start_date' => '2025-10-01',
+                'end_date' => '2026-05-15',
+                'completion_date' => '2026-05-15',
+                'technologies' => ['Vue.js', 'Tailwind CSS'],
+                'status' => 'completed',
+            ]);
+
+        $projectResponse->assertStatus(201)
+            ->assertJsonPath('data.title_ar', 'وفّر كاش')
+            ->assertJsonPath('data.subtitle_ar', 'تطبيق ترويجي ومالي')
+            ->assertJsonPath('data.description_ar', 'وصف تفصيلي لتطبيق وفّر كاش الفائز بجائزة عنان')
+            ->assertJsonPath('data.start_date', '2025-10-01')
+            ->assertJsonPath('data.completion_date', '2026-05-15');
+
+        // 3. Certificate with Arabic & Dates
+        $certResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/admin/certificates', [
+                'title' => 'Anan Graduation Award',
+                'title_ar' => 'جائزة عنان لأفضل مشروع تخرج',
+                'issuer' => 'UCAS Gaza',
+                'issuer_ar' => 'الكلية الجامعية للعلوم التطبيقية',
+                'description' => 'Honored with first place.',
+                'description_ar' => 'المركز الأول لأفضل مشروع تخرج.',
+                'date' => '2026',
+                'issue_date' => '2026-06-01',
+            ]);
+
+        $certResponse->assertStatus(201)
+            ->assertJsonPath('data.title_ar', 'جائزة عنان لأفضل مشروع تخرج')
+            ->assertJsonPath('data.issuer_ar', 'الكلية الجامعية للعلوم التطبيقية')
+            ->assertJsonPath('data.issue_date', '2026-06-01');
+
+        // 4. Skill with Arabic
+        $skillResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/admin/skills', [
+                'name' => 'Three.js Spatial Web',
+                'name_ar' => 'رسومات الويب المكانية Three.js',
+                'category' => '3D Graphics',
+                'category_ar' => 'رسومات ثلاثية الأبعاد',
+                'description_ar' => 'بناء وتطوير مشاهد WebGL ثلاثية الأبعاد عالية الأداء.',
+                'proficiency_level' => 'expert',
+            ]);
+
+        $skillResponse->assertStatus(201)
+            ->assertJsonPath('data.name_ar', 'رسومات الويب المكانية Three.js')
+            ->assertJsonPath('data.category_ar', 'رسومات ثلاثية الأبعاد')
+            ->assertJsonPath('data.description_ar', 'بناء وتطوير مشاهد WebGL ثلاثية الأبعاد عالية الأداء.');
+
+        // 5. Article with Arabic & Dates
+        $articleResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/admin/articles', [
+                'title' => 'Spatial Web in Vue 3',
+                'title_ar' => 'الويب المكاني في Vue 3',
+                'category' => '3D Graphics',
+                'category_ar' => 'رسومات ثلاثية الأبعاد',
+                'excerpt' => 'English excerpt.',
+                'excerpt_ar' => 'مقتطف عربي مميز.',
+                'content' => 'Full English content.',
+                'content_ar' => 'محتوى المقال الكامل باللغة العربية.',
+                'published_at' => '2026-01-15 12:00:00',
+            ]);
+
+        $articleResponse->assertStatus(201)
+            ->assertJsonPath('data.title_ar', 'الويب المكاني في Vue 3')
+            ->assertJsonPath('data.category_ar', 'رسومات ثلاثية الأبعاد')
+            ->assertJsonPath('data.excerpt_ar', 'مقتطف عربي مميز.');
+
+        // 6. Verify Public Portfolio API returns the full bilingual data
+        $publicPortfolio = $this->getJson('/api/portfolio');
+        $publicPortfolio->assertStatus(200)
+            ->assertJsonPath('data.profile.full_name_ar', 'محمد الحويطي')
+            ->assertJsonPath('data.profile.title_ar', 'مهندس واجهات أمامية ومطور رسومات ثلاثية الأبعاد');
+    }
 }

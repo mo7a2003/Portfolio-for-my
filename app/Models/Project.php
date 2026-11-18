@@ -57,6 +57,23 @@ class Project extends Model
         'tech_stack',
         'status',
         'is_featured',
+        // Arabic Translation & Date fields
+        'title_ar',
+        'titleAr',
+        'subtitle_ar',
+        'subtitleAr',
+        'tagline_ar',
+        'taglineAr',
+        'description_ar',
+        'descriptionAr',
+        'category_ar',
+        'categoryAr',
+        'start_date',
+        'startDate',
+        'end_date',
+        'endDate',
+        'completion_date',
+        'completionDate',
     ];
 
     /**
@@ -72,6 +89,14 @@ class Project extends Model
         'ribbon',
         'live_demo_url',
         'github_repository',
+        'titleAr',
+        'subtitleAr',
+        'taglineAr',
+        'descriptionAr',
+        'categoryAr',
+        'startDate',
+        'endDate',
+        'completionDate',
     ];
 
     /**
@@ -250,6 +275,86 @@ class Project extends Model
     public function setGithubRepositoryAttribute(?string $value): void
     {
         $this->attributes['github_url'] = $value;
+    }
+
+    public function getTitleArAttribute(): ?string
+    {
+        return $this->attributes['title_ar'] ?? null;
+    }
+
+    public function setTitleArAttribute(?string $value): void
+    {
+        $this->attributes['title_ar'] = $value;
+    }
+
+    public function getSubtitleArAttribute(): ?string
+    {
+        return $this->attributes['subtitle_ar'] ?? null;
+    }
+
+    public function setSubtitleArAttribute(?string $value): void
+    {
+        $this->attributes['subtitle_ar'] = $value;
+    }
+
+    public function getTaglineArAttribute(): ?string
+    {
+        return $this->attributes['tagline_ar'] ?? $this->attributes['subtitle_ar'] ?? null;
+    }
+
+    public function setTaglineArAttribute(?string $value): void
+    {
+        $this->attributes['tagline_ar'] = $value;
+    }
+
+    public function getDescriptionArAttribute(): ?string
+    {
+        return $this->attributes['description_ar'] ?? null;
+    }
+
+    public function setDescriptionArAttribute(?string $value): void
+    {
+        $this->attributes['description_ar'] = $value;
+    }
+
+    public function getCategoryArAttribute(): ?string
+    {
+        return $this->attributes['category_ar'] ?? null;
+    }
+
+    public function setCategoryArAttribute(?string $value): void
+    {
+        $this->attributes['category_ar'] = $value;
+    }
+
+    public function getStartDateAttribute(): ?string
+    {
+        return $this->attributes['start_date'] ?? null;
+    }
+
+    public function setStartDateAttribute(?string $value): void
+    {
+        $this->attributes['start_date'] = $value;
+    }
+
+    public function getEndDateAttribute(): ?string
+    {
+        return $this->attributes['end_date'] ?? null;
+    }
+
+    public function setEndDateAttribute(?string $value): void
+    {
+        $this->attributes['end_date'] = $value;
+    }
+
+    public function getCompletionDateAttribute(): ?string
+    {
+        return $this->attributes['completion_date'] ?? null;
+    }
+
+    public function setCompletionDateAttribute(?string $value): void
+    {
+        $this->attributes['completion_date'] = $value;
     }
 
     /**

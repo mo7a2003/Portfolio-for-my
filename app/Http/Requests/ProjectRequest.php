@@ -121,6 +121,43 @@ class ProjectRequest extends FormRequest
             $mergeData['category'] = (string) $category;
         }
 
+        // Arabic translations & dates
+        $titleAr = $this->input('title_ar') ?? $this->input('titleAr');
+        if ($titleAr !== null) {
+            $mergeData['title_ar'] = $titleAr;
+        }
+
+        $subtitleAr = $this->input('subtitle_ar') ?? $this->input('subtitleAr') ?? $this->input('tagline_ar') ?? $this->input('taglineAr');
+        if ($subtitleAr !== null) {
+            $mergeData['subtitle_ar'] = $subtitleAr;
+            $mergeData['tagline_ar'] = $subtitleAr;
+        }
+
+        $descAr = $this->input('description_ar') ?? $this->input('descriptionAr');
+        if ($descAr !== null) {
+            $mergeData['description_ar'] = $descAr;
+        }
+
+        $catAr = $this->input('category_ar') ?? $this->input('categoryAr');
+        if ($catAr !== null) {
+            $mergeData['category_ar'] = $catAr;
+        }
+
+        $startDate = $this->input('start_date') ?? $this->input('startDate');
+        if ($startDate !== null) {
+            $mergeData['start_date'] = $startDate;
+        }
+
+        $endDate = $this->input('end_date') ?? $this->input('endDate');
+        if ($endDate !== null) {
+            $mergeData['end_date'] = $endDate;
+        }
+
+        $completionDate = $this->input('completion_date') ?? $this->input('completionDate');
+        if ($completionDate !== null) {
+            $mergeData['completion_date'] = $completionDate;
+        }
+
         if (! empty($mergeData)) {
             $this->merge($mergeData);
         }
@@ -166,6 +203,23 @@ class ProjectRequest extends FormRequest
             'tech_stack' => ['nullable'],
             'status' => ['nullable', 'string', 'max:50'],
             'is_featured' => ['nullable', 'boolean'],
+            // Arabic Translation & Date fields
+            'title_ar' => ['nullable', 'string', 'max:255'],
+            'titleAr' => ['nullable', 'string', 'max:255'],
+            'subtitle_ar' => ['nullable', 'string', 'max:255'],
+            'subtitleAr' => ['nullable', 'string', 'max:255'],
+            'tagline_ar' => ['nullable', 'string', 'max:255'],
+            'taglineAr' => ['nullable', 'string', 'max:255'],
+            'description_ar' => ['nullable', 'string'],
+            'descriptionAr' => ['nullable', 'string'],
+            'category_ar' => ['nullable', 'string', 'max:100'],
+            'categoryAr' => ['nullable', 'string', 'max:100'],
+            'start_date' => ['nullable', 'string', 'max:50'],
+            'startDate' => ['nullable', 'string', 'max:50'],
+            'end_date' => ['nullable', 'string', 'max:50'],
+            'endDate' => ['nullable', 'string', 'max:50'],
+            'completion_date' => ['nullable', 'string', 'max:50'],
+            'completionDate' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

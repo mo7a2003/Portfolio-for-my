@@ -50,6 +50,15 @@ class Article extends Model
         'isPublished',
         'published_at',
         'publishedAt',
+        // Arabic Translation fields
+        'title_ar',
+        'titleAr',
+        'excerpt_ar',
+        'excerptAr',
+        'content_ar',
+        'contentAr',
+        'category_ar',
+        'categoryAr',
     ];
 
     /**
@@ -62,6 +71,10 @@ class Article extends Model
         'readTime',
         'isPublished',
         'publishedAt',
+        'titleAr',
+        'excerptAr',
+        'contentAr',
+        'categoryAr',
     ];
 
     /**
@@ -137,6 +150,46 @@ class Article extends Model
     public function setPublishedAtAttribute(?string $value): void
     {
         $this->attributes['published_at'] = $value;
+    }
+
+    public function getTitleArAttribute(): ?string
+    {
+        return $this->attributes['title_ar'] ?? null;
+    }
+
+    public function setTitleArAttribute(?string $value): void
+    {
+        $this->attributes['title_ar'] = $value;
+    }
+
+    public function getExcerptArAttribute(): ?string
+    {
+        return $this->attributes['excerpt_ar'] ?? null;
+    }
+
+    public function setExcerptArAttribute(?string $value): void
+    {
+        $this->attributes['excerpt_ar'] = $value;
+    }
+
+    public function getContentArAttribute(): ?string
+    {
+        return $this->attributes['content_ar'] ?? null;
+    }
+
+    public function setContentArAttribute(?string $value): void
+    {
+        $this->attributes['content_ar'] = $value;
+    }
+
+    public function getCategoryArAttribute(): ?string
+    {
+        return $this->attributes['category_ar'] ?? null;
+    }
+
+    public function setCategoryArAttribute(?string $value): void
+    {
+        $this->attributes['category_ar'] = $value;
     }
 
     /**

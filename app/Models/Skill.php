@@ -31,6 +31,13 @@ class Skill extends Model
         'order_index',
         'order',
         'orderIndex',
+        // Arabic Translation fields
+        'name_ar',
+        'nameAr',
+        'category_ar',
+        'categoryAr',
+        'description_ar',
+        'descriptionAr',
     ];
 
     /**
@@ -48,6 +55,9 @@ class Skill extends Model
         'percentage',
         'order',
         'orderIndex',
+        'nameAr',
+        'categoryAr',
+        'descriptionAr',
     ];
 
     public function getGroupAttribute(): ?string
@@ -223,6 +233,36 @@ class Skill extends Model
     public function setOrderIndexAttribute(mixed $value): void
     {
         $this->attributes['order_index'] = (int) $value;
+    }
+
+    public function getNameArAttribute(): ?string
+    {
+        return $this->attributes['name_ar'] ?? null;
+    }
+
+    public function setNameArAttribute(?string $value): void
+    {
+        $this->attributes['name_ar'] = $value;
+    }
+
+    public function getCategoryArAttribute(): ?string
+    {
+        return $this->attributes['category_ar'] ?? null;
+    }
+
+    public function setCategoryArAttribute(?string $value): void
+    {
+        $this->attributes['category_ar'] = $value;
+    }
+
+    public function getDescriptionArAttribute(): ?string
+    {
+        return $this->attributes['description_ar'] ?? null;
+    }
+
+    public function setDescriptionArAttribute(?string $value): void
+    {
+        $this->attributes['description_ar'] = $value;
     }
 
     /**
