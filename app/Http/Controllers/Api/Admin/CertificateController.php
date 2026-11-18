@@ -37,6 +37,8 @@ class CertificateController extends Controller
         if ($uploadedFile) {
             $path = $uploadedFile->store('certificates', 'public');
             $validated['image'] = asset('storage/'.$path);
+        } elseif (! $request->has('image') || empty($validated['image'])) {
+            unset($validated['image']);
         }
 
         $certificate = Certificate::create($validated);
@@ -71,6 +73,8 @@ class CertificateController extends Controller
         if ($uploadedFile) {
             $path = $uploadedFile->store('certificates', 'public');
             $validated['image'] = asset('storage/'.$path);
+        } elseif (! $request->has('image') || empty($validated['image'])) {
+            unset($validated['image']);
         }
 
         // Clean up old image if replaced with a new one

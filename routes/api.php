@@ -78,6 +78,7 @@ Route::prefix('admin')->group(function (): void {
 
         // Certificates & Awards CRUD
         Route::apiResource('certificates', AdminCertificateController::class)->names('admin.certificates');
+        Route::post('/certificates/{certificate}', [AdminCertificateController::class, 'update'])->name('admin.certificates.update-post');
 
         // CV Management CRUD
         Route::apiResource('cv', AdminCvController::class)->names('admin.cv');

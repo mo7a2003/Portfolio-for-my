@@ -744,6 +744,51 @@ class PortfolioApiTest extends TestCase
         $this->assertNull(Certificate::find($certId));
     }
 
+    public function test_certificate_image_upload_with_ribbon_and_direct_post_update(): void
+    {
+        Storage::fake('public');
+        $token = $this->adminUser->createToken('test-token')->plainTextToken;
+
+        $imageFile = UploadedFile::fake()->image('certificate-badge.webp');
+
+        // Create with ribbon, no explicit description (triggers fallback), and image
+        $createResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/certificates', [
+                'title' => 'AWS Certified Solutions Architect',
+                'title_ar' => 'شهادة مهندس حلول معتمد من AWS',
+                'issuer' => 'Amazon Web Services',
+                'issuer_ar' => 'خدمات أمازون للويب',
+                'ribbon' => 'Special Distinction',
+                'image' => $imageFile,
+            ]);
+
+        $createResponse->assertStatus(201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.title', 'AWS Certified Solutions Architect')
+            ->assertJsonPath('data.title_ar', 'شهادة مهندس حلول معتمد من AWS')
+            ->assertJsonPath('data.badge', 'Special Distinction')
+            ->assertJsonPath('data.ribbon', 'Special Distinction')
+            ->assertJsonPath('data.description', 'AWS Certified Solutions Architect');
+
+        $certId = $createResponse->json('data.id');
+        $initialImage = Certificate::find($certId)->getRawOriginal('image');
+        $this->assertNotNull($initialImage);
+
+        // Update via direct POST to /api/admin/certificates/{id} WITHOUT new image -> image is preserved
+        $updatePostResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/certificates/'.$certId, [
+                'title' => 'AWS Certified Solutions Architect Professional',
+                'issuer' => 'Amazon Web Services Inc.',
+            ]);
+
+        $updatePostResponse->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.title', 'AWS Certified Solutions Architect Professional');
+
+        $preservedImage = Certificate::find($certId)->getRawOriginal('image');
+        $this->assertEquals($initialImage, $preservedImage);
+    }
+
     public function test_social_links_upgraded_crud_and_direct_contact(): void
     {
         $token = $this->adminUser->createToken('test-token')->plainTextToken;

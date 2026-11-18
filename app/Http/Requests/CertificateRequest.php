@@ -38,9 +38,23 @@ class CertificateRequest extends FormRequest
         $date = $this->input('date') ?? $this->input('year');
         $mergeData['date'] = (! empty($date) && is_string($date)) ? trim($date) : '2026';
 
+        // 3b. Description fallback
+        $description = $this->input('description') ?? $this->input('description_en');
+        if ($description !== null && trim((string) $description) !== '') {
+            $mergeData['description'] = trim((string) $description);
+        } elseif (! empty($mergeData['title'])) {
+            $mergeData['description'] = $mergeData['title'];
+        }
+
         // 4. Accent / Color
         $accent = $this->input('accent') ?? $this->input('accent_color') ?? $this->input('color');
         $mergeData['accent'] = (! empty($accent) && is_string($accent)) ? trim($accent) : 'amber';
+
+        // 4b. Badge / Ribbon
+        $badge = $this->input('badge') ?? $this->input('ribbon');
+        if ($badge !== null) {
+            $mergeData['badge'] = trim((string) $badge);
+        }
 
         // 5. Credential ID
         $credentialId = $this->input('credential_id') ?? $this->input('credentialId') ?? $this->input('certificate_id');
@@ -141,13 +155,18 @@ class CertificateRequest extends FormRequest
             'issuer' => ['required', 'string', 'max:150'],
             'date' => ['nullable', 'string', 'max:50'],
             'badge' => ['nullable', 'string', 'max:100'],
+            'ribbon' => ['nullable', 'string', 'max:100'],
             'accent' => ['nullable', 'string', 'max:50'],
             'credential_id' => ['nullable', 'string', 'max:150'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['nullable', 'string', 'max:100'],
             'verify_url' => ['nullable', 'string', 'max:500'],
-            'image' => ['nullable'],
+            'image' => $this->hasFile('image')
+                ? ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg,gif', 'max:30720']
+                : ['nullable', 'string', 'max:1000'],
+            'file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg,gif', 'max:30720'],
+            'thumbnail' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg,gif', 'max:30720'],
             'sort_order' => ['nullable', 'integer'],
             'is_active' => ['nullable', 'boolean'],
             // Arabic Translation & Date fields

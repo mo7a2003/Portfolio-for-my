@@ -21,6 +21,7 @@ class Certificate extends Model
         'issuer',
         'date',
         'badge',
+        'ribbon',
         'accent',
         'credential_id',
         'credentialId',
@@ -59,6 +60,7 @@ class Certificate extends Model
         'verifyUrl',
         'sortOrder',
         'isActive',
+        'ribbon',
         'titleAr',
         'issuerAr',
         'descriptionAr',
@@ -148,6 +150,19 @@ class Certificate extends Model
     public function setVerifyUrlAttribute(?string $value): void
     {
         $this->attributes['verify_url'] = $value;
+    }
+
+    /**
+     * Aliases for badge / ribbon.
+     */
+    public function getRibbonAttribute(): ?string
+    {
+        return $this->attributes['badge'] ?? null;
+    }
+
+    public function setRibbonAttribute(?string $value): void
+    {
+        $this->attributes['badge'] = $value;
     }
 
     public function setVerificationUrlAttribute(?string $value): void
