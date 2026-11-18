@@ -205,10 +205,6 @@ const props = defineProps({
   isSoundEnabled: {
     type: Boolean,
     default: false
-  },
-  isCyanTheme: {
-    type: Boolean,
-    default: false
   }
 })
 

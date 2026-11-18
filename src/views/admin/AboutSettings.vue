@@ -616,6 +616,7 @@
               <label class="block text-xs font-mono text-slate-300 mb-1.5">Period / Year *</label>
               <input
                 v-model="milestoneForm.period"
+                @input="milestoneForm.year = $event.target.value; milestoneForm.date = $event.target.value"
                 type="text"
                 required
                 placeholder="e.g. 2026 or 2023 — Present"
@@ -1088,6 +1089,9 @@ const saveMilestoneModal = async () => {
     milestoneForm.value.completion_date || 
     ''
   ).trim()
+  milestoneForm.value.period = periodVal
+  milestoneForm.value.year = periodVal
+  milestoneForm.value.date = periodVal
   const companyVal = String(milestoneForm.value.company || milestoneForm.value.organization || milestoneForm.value.subtitle || '').trim()
   const companyArVal = String(milestoneForm.value.company_ar || milestoneForm.value.companyAr || '').trim()
   const titleVal = String(milestoneForm.value.title || '').trim()

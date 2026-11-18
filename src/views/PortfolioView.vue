@@ -263,7 +263,7 @@ const toggleSound = () => {
 }
 
 const toggleTheme = () => {
-  switchGlobalTheme()
+  // Theme state is reactively toggled by themeState / Navbar; play sound
   playFuturisticSweep()
 }
 
