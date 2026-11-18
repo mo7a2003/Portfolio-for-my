@@ -30,6 +30,8 @@ class Profile extends Model
         'projects_completed',
         'projectsCount',
         'milestones',
+        'timeline',
+        'career_milestones',
         'education',
         'avatar_url',
         'avatarUrl',
@@ -94,6 +96,7 @@ class Profile extends Model
         'detailedBioAr',
         'educationAr',
         'milestonesAr',
+        'timeline',
         'birthDate',
     ];
 
@@ -368,6 +371,106 @@ class Profile extends Model
     public function setEducationArAttribute(?string $value): void
     {
         $this->attributes['education_ar'] = $value;
+    }
+
+    public function getMilestonesAttribute(): array
+    {
+        $val = $this->attributes['milestones'] ?? null;
+        if (is_string($val)) {
+            $decoded = json_decode($val, true);
+            $val = json_last_error() === JSON_ERROR_NONE ? $decoded : [];
+        }
+
+        if (! is_array($val)) {
+            return [];
+        }
+
+        return array_map(function ($m) {
+            if (! is_array($m)) return $m;
+            $period = trim((string) ($m['period'] ?? $m['year'] ?? $m['date'] ?? $m['time_frame'] ?? $m['duration'] ?? $m['start_date'] ?? $m['completion_date'] ?? ''));
+            $company = trim((string) ($m['company'] ?? $m['organization'] ?? $m['subtitle'] ?? ''));
+            $companyAr = trim((string) ($m['company_ar'] ?? $m['companyAr'] ?? ''));
+            $title = trim((string) ($m['title'] ?? ''));
+            $titleAr = trim((string) ($m['title_ar'] ?? $m['titleAr'] ?? ''));
+            $desc = trim((string) ($m['description'] ?? ''));
+            $descAr = trim((string) ($m['description_ar'] ?? $m['descriptionAr'] ?? ''));
+
+            return array_merge($m, [
+                'period' => $period,
+                'year' => $period,
+                'date' => $period,
+                'time_frame' => $period,
+                'start_date' => $m['start_date'] ?? $period,
+                'completion_date' => $m['completion_date'] ?? $period,
+                'company' => $company,
+                'organization' => $company,
+                'subtitle' => $company,
+                'company_ar' => $companyAr,
+                'title' => $title,
+                'title_ar' => $titleAr,
+                'description' => $desc,
+                'description_ar' => $descAr,
+            ]);
+        }, $val);
+    }
+
+    public function setMilestonesAttribute(mixed $value): void
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            $normalized = [];
+            foreach ($value as $m) {
+                if (! is_array($m)) continue;
+                $period = trim((string) ($m['period'] ?? $m['year'] ?? $m['date'] ?? $m['time_frame'] ?? $m['duration'] ?? $m['start_date'] ?? $m['completion_date'] ?? ''));
+                $company = trim((string) ($m['company'] ?? $m['organization'] ?? $m['subtitle'] ?? ''));
+                $companyAr = trim((string) ($m['company_ar'] ?? $m['companyAr'] ?? ''));
+                $title = trim((string) ($m['title'] ?? ''));
+                $titleAr = trim((string) ($m['title_ar'] ?? $m['titleAr'] ?? ''));
+                $desc = trim((string) ($m['description'] ?? ''));
+                $descAr = trim((string) ($m['description_ar'] ?? $m['descriptionAr'] ?? ''));
+
+                $normalized[] = array_merge($m, [
+                    'period' => $period,
+                    'year' => $period,
+                    'date' => $period,
+                    'time_frame' => $period,
+                    'start_date' => $m['start_date'] ?? $period,
+                    'completion_date' => $m['completion_date'] ?? $period,
+                    'company' => $company,
+                    'organization' => $company,
+                    'subtitle' => $company,
+                    'company_ar' => $companyAr,
+                    'title' => $title,
+                    'title_ar' => $titleAr,
+                    'description' => $desc,
+                    'description_ar' => $descAr,
+                ]);
+            }
+            $this->attributes['milestones'] = json_encode($normalized, JSON_UNESCAPED_UNICODE);
+        } else {
+            $this->attributes['milestones'] = $value;
+        }
+    }
+
+    public function getTimelineAttribute(): array
+    {
+        return $this->getMilestonesAttribute();
+    }
+
+    public function setTimelineAttribute(mixed $value): void
+    {
+        $this->setMilestonesAttribute($value);
+    }
+
+    public function setCareerMilestonesAttribute(mixed $value): void
+    {
+        $this->setMilestonesAttribute($value);
     }
 
     public function getMilestonesArAttribute(): mixed

@@ -57,15 +57,45 @@ class ProfileRequest extends FormRequest
         $projectsCompleted = $this->input('projects_completed') ?? $this->input('projectsCompleted') ?? $this->input('projects_count') ?? $this->input('projectsCount');
         $mergeData['projects_completed'] = ($projectsCompleted !== null && $projectsCompleted !== '') ? (int) $projectsCompleted : 3;
 
-        // 7. milestones (handle array or JSON string from FormData)
-        $milestones = $this->input('milestones');
-        if (is_string($milestones)) {
-            $decoded = json_decode($milestones, true);
+        // 7. milestones & timeline (handle array or JSON string from FormData)
+        $rawMilestones = $this->input('milestones') ?? $this->input('timeline') ?? $this->input('career_milestones');
+        if (is_string($rawMilestones)) {
+            $decoded = json_decode($rawMilestones, true);
             if (is_array($decoded)) {
-                $mergeData['milestones'] = $decoded;
+                $rawMilestones = $decoded;
             }
-        } elseif (is_array($milestones)) {
-            $mergeData['milestones'] = $milestones;
+        }
+        if (is_array($rawMilestones)) {
+            $normalizedMilestones = [];
+            foreach ($rawMilestones as $m) {
+                if (! is_array($m)) continue;
+                $period = trim((string) ($m['period'] ?? $m['year'] ?? $m['date'] ?? $m['time_frame'] ?? $m['duration'] ?? $m['start_date'] ?? $m['completion_date'] ?? ''));
+                $company = trim((string) ($m['company'] ?? $m['organization'] ?? $m['subtitle'] ?? ''));
+                $companyAr = trim((string) ($m['company_ar'] ?? $m['companyAr'] ?? ''));
+                $title = trim((string) ($m['title'] ?? ''));
+                $titleAr = trim((string) ($m['title_ar'] ?? $m['titleAr'] ?? ''));
+                $desc = trim((string) ($m['description'] ?? ''));
+                $descAr = trim((string) ($m['description_ar'] ?? $m['descriptionAr'] ?? ''));
+
+                $normalizedMilestones[] = array_merge($m, [
+                    'period' => $period,
+                    'year' => $period,
+                    'date' => $period,
+                    'time_frame' => $period,
+                    'start_date' => $m['start_date'] ?? $period,
+                    'completion_date' => $m['completion_date'] ?? $period,
+                    'company' => $company,
+                    'organization' => $company,
+                    'subtitle' => $company,
+                    'company_ar' => $companyAr,
+                    'title' => $title,
+                    'title_ar' => $titleAr,
+                    'description' => $desc,
+                    'description_ar' => $descAr,
+                ]);
+            }
+            $mergeData['milestones'] = $normalizedMilestones;
+            $mergeData['timeline'] = $normalizedMilestones;
         }
 
         // 8. avatar_url / avatarUrl / avatar / image
@@ -168,6 +198,8 @@ class ProfileRequest extends FormRequest
             'experience' => ['nullable', 'integer', 'min:0'],
             'projects_completed' => ['nullable', 'integer', 'min:0'],
             'milestones' => ['nullable'],
+            'timeline' => ['nullable'],
+            'career_milestones' => ['nullable'],
             'education' => ['nullable', 'string', 'max:255'],
             'avatar_url' => ['nullable'],
             'avatar' => ['nullable'],

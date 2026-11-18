@@ -27,10 +27,14 @@ class PortfolioController extends Controller
 
         $skillsByCategory = $skills->groupBy('category');
 
-        $featuredProjects = Project::query()
-            ->featured()
+        $allProjects = Project::query()
             ->orderByDesc('created_at')
             ->get();
+
+        $featuredProjects = $allProjects->where('is_featured', true)->values();
+        if ($featuredProjects->isEmpty()) {
+            $featuredProjects = $allProjects;
+        }
 
         $articles = Article::query()
             ->published()
@@ -58,6 +62,7 @@ class PortfolioController extends Controller
                 'cv' => $activeCv,
                 'skills' => $skills,
                 'skills_by_category' => $skillsByCategory,
+                'projects' => $allProjects,
                 'featured_projects' => $featuredProjects,
                 'articles' => $articles,
                 'certificates' => $certificates,
