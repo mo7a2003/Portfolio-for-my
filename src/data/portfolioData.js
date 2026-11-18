@@ -394,29 +394,9 @@ export const defaultSocialLinks = [
     platform: 'WhatsApp Direct',
     category: 'direct_chat',
     handle: 'Instant Chat',
-    url: 'https://wa.me/970599000000',
+    url: 'https://wa.me/970590000000',
     color: '#10b981',
     sort_order: 1,
-    is_active: true
-  },
-  {
-    id: 'soc-telegram',
-    platform: 'Telegram',
-    category: 'direct_chat',
-    handle: '@mohammed_alhwaiti',
-    url: 'https://t.me/mohammed_alhwaiti',
-    color: '#00f2fe',
-    sort_order: 2,
-    is_active: true
-  },
-  {
-    id: 'soc-discord',
-    platform: 'Discord',
-    category: 'direct_chat',
-    handle: 'alhwaiti.dev',
-    url: 'https://discord.com',
-    color: '#818cf8',
-    sort_order: 3,
     is_active: true
   },
   {
@@ -424,9 +404,9 @@ export const defaultSocialLinks = [
     platform: 'GitHub',
     category: 'social_network',
     handle: '@mohammed-alhwaiti',
-    url: 'https://github.com',
+    url: 'https://github.com/mohammed-alhwaiti',
     color: '#f8fafc',
-    sort_order: 4,
+    sort_order: 2,
     is_active: true
   },
   {
@@ -434,49 +414,19 @@ export const defaultSocialLinks = [
     platform: 'LinkedIn',
     category: 'social_network',
     handle: 'in/mohammed-alhwaiti',
-    url: 'https://linkedin.com',
+    url: 'https://linkedin.com/in/mohammed-alhwaiti',
     color: '#38bdf8',
-    sort_order: 5,
+    sort_order: 3,
     is_active: true
   },
   {
-    id: 'soc-behance',
-    platform: 'Behance / UI',
+    id: 'soc-vibelocate',
+    platform: 'VibeLocate Platform',
     category: 'social_network',
-    handle: '@mohammed-alhwaiti',
-    url: 'https://dribbble.com',
-    color: '#ec4899',
-    sort_order: 6,
-    is_active: true
-  },
-  {
-    id: 'soc-x',
-    platform: 'X (Twitter)',
-    category: 'social_network',
-    handle: '@alhwaiti_dev',
-    url: 'https://x.com',
-    color: '#f59e0b',
-    sort_order: 7,
-    is_active: true
-  },
-  {
-    id: 'soc-instagram',
-    platform: 'Instagram',
-    category: 'social_network',
-    handle: '@mohammed.alhwaiti',
-    url: 'https://instagram.com',
-    color: '#ff5500',
-    sort_order: 8,
-    is_active: true
-  },
-  {
-    id: 'soc-facebook',
-    platform: 'Facebook',
-    category: 'social_network',
-    handle: 'mohammed.alhwaiti',
-    url: 'https://facebook.com',
-    color: '#60a5fa',
-    sort_order: 9,
+    handle: '@vibelocate',
+    url: 'https://vibelocate.vercel.app',
+    color: '#00f2fe',
+    sort_order: 4,
     is_active: true
   }
 ]

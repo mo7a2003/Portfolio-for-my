@@ -78,14 +78,17 @@
               </div>
             </div>
 
-            <!-- Instant Direct Chat Priority Row (WhatsApp, Telegram, Discord) -->
-            <div class="space-y-2.5">
+            <!-- Instant Direct Chat Priority Row (Dynamically Filtered from DB/Profile) -->
+            <div v-if="directChatChannels.length > 0" class="space-y-2.5">
               <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center justify-between">
                 <span>// INSTANT DIRECT MESSAGING</span>
                 <span class="text-emerald-400">⚡ AVG REPLY &lt; 1 HR</span>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div 
+                class="grid gap-2.5"
+                :class="directChatChannels.length === 1 ? 'grid-cols-1' : directChatChannels.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-3'"
+              >
                 <a
                   v-for="chat in directChatChannels"
                   :key="chat.id"
@@ -266,7 +269,7 @@
         <!-- ======================================================== -->
         <!-- BOTTOM DOCK: OMNI-CHANNEL SOCIAL & DEVELOPER NETWORKS    -->
         <!-- ======================================================== -->
-        <div class="relative z-10 mt-10 pt-8 border-t border-white/[0.08]">
+        <div v-if="socialNetworkCards.length > 0" class="relative z-10 mt-10 pt-8 border-t border-white/[0.08]">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
             <div class="flex items-center gap-2 font-mono text-xs text-slate-300">
               <span class="w-2 h-2 rounded-full bg-[#00f2fe] animate-pulse"></span>
@@ -277,7 +280,10 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div 
+            class="grid gap-3"
+            :class="socialNetworkCards.length <= 3 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' : socialNetworkCards.length <= 4 ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-4' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'"
+          >
             <a
               v-for="social in socialNetworkCards"
               :key="social.id"
@@ -420,9 +426,10 @@ const resolveSvgForPlatform = (platformKey) => {
   return DEFAULT_SVG_MAP.generic
 }
 
-// Priority Direct Chat Channels (WhatsApp, Telegram, Discord) synced with Admin Social Hub
+// Priority Direct Chat Channels (WhatsApp, Telegram, Discord, etc.) dynamically filtered from Database & Profile
 const directChatChannels = computed(() => {
-  const defaults = [
+  const profile = currentProfile.value || {}
+  const presets = [
     {
       id: 'whatsapp',
       keywords: ['whatsapp', 'wa'],
@@ -430,7 +437,7 @@ const directChatChannels = computed(() => {
       handle: 'Instant Chat',
       color: '#10b981',
       sort_order: 1,
-      url: findDynamicUrl(['whatsapp', 'wa'], currentProfile.value.whatsapp || 'https://wa.me/970599000000'),
+      profileUrl: profile.whatsapp,
       svg: DEFAULT_SVG_MAP.whatsapp
     },
     {
@@ -440,7 +447,7 @@ const directChatChannels = computed(() => {
       handle: '@mohammed_alhwaiti',
       color: '#00f2fe',
       sort_order: 2,
-      url: findDynamicUrl(['telegram', 'tg'], 'https://t.me/mohammed_alhwaiti'),
+      profileUrl: profile.telegram,
       svg: DEFAULT_SVG_MAP.telegram
     },
     {
@@ -450,32 +457,46 @@ const directChatChannels = computed(() => {
       handle: 'alhwaiti.dev',
       color: '#818cf8',
       sort_order: 3,
-      url: findDynamicUrl(['discord'], 'https://discord.com'),
+      profileUrl: profile.discord,
       svg: DEFAULT_SVG_MAP.discord
     }
   ]
 
-  return defaults
-    .map((def) => {
-      const dyn = findDynamicChannel(def.keywords)
-      if (!dyn) return def
-      return {
+  const channels = []
+
+  for (const def of presets) {
+    const dyn = findDynamicChannel(def.keywords)
+    let url = ''
+
+    if (dyn && dyn.url && typeof dyn.url === 'string' && dyn.url.trim() && dyn.url !== '#' && !dyn.url.includes('example.com')) {
+      url = dyn.url.trim()
+    } else if (def.profileUrl && typeof def.profileUrl === 'string' && def.profileUrl.trim() && def.profileUrl !== '#' && !def.profileUrl.includes('example.com')) {
+      url = def.profileUrl.trim()
+    }
+
+    // Only include if the platform is actually registered with a valid URL
+    if (url) {
+      channels.push({
         ...def,
-        name: dyn.name || def.name,
-        handle: dyn.handle || def.handle,
-        color: dyn.color || def.color,
-        url: dyn.url || def.url,
-        is_active: dyn.is_active !== false,
-        sort_order: dyn.sort_order ?? def.sort_order
-      }
-    })
+        name: dyn?.name || def.name,
+        handle: dyn?.handle || def.handle,
+        color: dyn?.color || def.color,
+        url,
+        is_active: dyn ? dyn.is_active !== false && dyn.is_active !== 0 : true,
+        sort_order: dyn?.sort_order ?? def.sort_order
+      })
+    }
+  }
+
+  return channels
     .filter((ch) => ch.is_active !== false)
     .sort((a, b) => (a.sort_order || 99) - (b.sort_order || 99))
 })
 
-// Complete Social & Developer Network Matrix (6 Core Platforms + Custom Admin Additions)
+// Complete Social & Developer Network Matrix: Only platforms present in DB/Profile are shown
 const socialNetworkCards = computed(() => {
-  const defaults = [
+  const profile = currentProfile.value || {}
+  const presets = [
     {
       id: 'github',
       keywords: ['github', 'git'],
@@ -483,7 +504,7 @@ const socialNetworkCards = computed(() => {
       handle: '@mohammed-alhwaiti',
       color: '#f8fafc',
       sort_order: 4,
-      url: findDynamicUrl(['github', 'git'], currentProfile.value.github || 'https://github.com'),
+      profileUrl: profile.github,
       svg: DEFAULT_SVG_MAP.github
     },
     {
@@ -493,7 +514,7 @@ const socialNetworkCards = computed(() => {
       handle: 'in/mohammed-alhwaiti',
       color: '#38bdf8',
       sort_order: 5,
-      url: findDynamicUrl(['linkedin'], currentProfile.value.linkedin || 'https://linkedin.com'),
+      profileUrl: profile.linkedin,
       svg: DEFAULT_SVG_MAP.linkedin
     },
     {
@@ -503,7 +524,7 @@ const socialNetworkCards = computed(() => {
       handle: '@mohammed-alhwaiti',
       color: '#ec4899',
       sort_order: 6,
-      url: findDynamicUrl(['behance', 'dribbble'], currentProfile.value.dribbble || 'https://dribbble.com'),
+      profileUrl: profile.behance || profile.dribbble,
       svg: DEFAULT_SVG_MAP.behance
     },
     {
@@ -513,7 +534,7 @@ const socialNetworkCards = computed(() => {
       handle: '@alhwaiti_dev',
       color: '#f59e0b',
       sort_order: 7,
-      url: findDynamicUrl(['x', 'twitter'], currentProfile.value.x || 'https://x.com'),
+      profileUrl: profile.x || profile.twitter,
       svg: DEFAULT_SVG_MAP.x
     },
     {
@@ -523,7 +544,7 @@ const socialNetworkCards = computed(() => {
       handle: '@mohammed.alhwaiti',
       color: '#ff5500',
       sort_order: 8,
-      url: findDynamicUrl(['instagram', 'ig'], currentProfile.value.instagram || 'https://instagram.com'),
+      profileUrl: profile.instagram,
       svg: DEFAULT_SVG_MAP.instagram
     },
     {
@@ -533,39 +554,51 @@ const socialNetworkCards = computed(() => {
       handle: 'mohammed.alhwaiti',
       color: '#60a5fa',
       sort_order: 9,
-      url: findDynamicUrl(['facebook', 'fb'], currentProfile.value.facebook || 'https://facebook.com'),
+      profileUrl: profile.facebook,
       svg: DEFAULT_SVG_MAP.facebook
     }
   ]
 
-  const merged = defaults.map((def) => {
-    const dyn = findDynamicChannel(def.keywords)
-    if (!dyn) return def
-    return {
-      ...def,
-      name: dyn.name || def.name,
-      handle: dyn.handle || def.handle,
-      color: dyn.color || def.color,
-      url: dyn.url || def.url,
-      is_active: dyn.is_active !== false,
-      sort_order: dyn.sort_order ?? def.sort_order
-    }
-  })
+  const activeCards = []
 
-  // Append any extra custom social channels added in Admin that aren't in the 9 built-in presets
+  for (const def of presets) {
+    const dyn = findDynamicChannel(def.keywords)
+    let url = ''
+
+    if (dyn && dyn.url && typeof dyn.url === 'string' && dyn.url.trim() && dyn.url !== '#' && !dyn.url.includes('example.com')) {
+      url = dyn.url.trim()
+    } else if (def.profileUrl && typeof def.profileUrl === 'string' && def.profileUrl.trim() && def.profileUrl !== '#' && !def.profileUrl.includes('example.com')) {
+      url = def.profileUrl.trim()
+    }
+
+    if (url) {
+      activeCards.push({
+        ...def,
+        name: dyn?.name || def.name,
+        handle: dyn?.handle || def.handle,
+        color: dyn?.color || def.color,
+        url,
+        is_active: dyn ? dyn.is_active !== false && dyn.is_active !== 0 : true,
+        sort_order: dyn?.sort_order ?? def.sort_order
+      })
+    }
+  }
+
+  // Append any extra custom social channels added in Admin (e.g. VibeLocate, YouTube, etc.)
   if (Array.isArray(props.socialLinks)) {
     const builtInKeywords = ['whatsapp', 'wa', 'telegram', 'tg', 'discord', 'github', 'git', 'linkedin', 'behance', 'dribbble', 'x', 'twitter', 'instagram', 'ig', 'facebook', 'fb']
     props.socialLinks.forEach((item) => {
+      if (item.is_active === false || item.is_active === 0) return
       const p = (item.platform || item.name || '').toLowerCase()
       const isBuiltIn = builtInKeywords.some((k) => p.includes(k))
-      if (!isBuiltIn && item.is_active !== false && item.url) {
-        merged.push({
+      if (!isBuiltIn && item.url && typeof item.url === 'string' && item.url.trim() && item.url !== '#' && !item.url.includes('example.com')) {
+        activeCards.push({
           id: item.id || p,
           name: item.name || item.platform,
           handle: item.handle || '@mohammed_alhwaiti',
           color: item.color || '#00f2fe',
           sort_order: item.sort_order || 99,
-          url: item.url,
+          url: item.url.trim(),
           is_active: true,
           svg: resolveSvgForPlatform(p)
         })
@@ -573,7 +606,7 @@ const socialNetworkCards = computed(() => {
     })
   }
 
-  return merged
+  return activeCards
     .filter((ch) => ch.is_active !== false)
     .sort((a, b) => (a.sort_order || 99) - (b.sort_order || 99))
 })

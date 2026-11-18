@@ -31,7 +31,8 @@
       <div class="flex items-center gap-4">
         <!-- GitHub -->
         <a
-          :href="resolveSocialUrl('github', currentProfile.github || 'https://github.com')"
+          v-if="resolveSocialUrl('github')"
+          :href="resolveSocialUrl('github')"
           target="_blank"
           rel="noopener noreferrer"
           class="w-9 h-9 rounded-full bg-white/5 hover:bg-gold-500/20 border border-white/10 hover:border-gold-500/40 text-slate-300 hover:text-gold-300 flex items-center justify-center transition-all"
@@ -44,7 +45,8 @@
 
         <!-- LinkedIn -->
         <a
-          :href="resolveSocialUrl('linkedin', currentProfile.linkedin || 'https://linkedin.com')"
+          v-if="resolveSocialUrl('linkedin')"
+          :href="resolveSocialUrl('linkedin')"
           target="_blank"
           rel="noopener noreferrer"
           class="w-9 h-9 rounded-full bg-white/5 hover:bg-gold-500/20 border border-white/10 hover:border-gold-500/40 text-slate-300 hover:text-gold-300 flex items-center justify-center transition-all"
@@ -90,7 +92,7 @@ const currentProfile = computed(() => {
   return Object.keys(props.profile || {}).length ? { ...personalInfo, ...props.profile } : personalInfo
 })
 
-const resolveSocialUrl = (platformKey, fallbackUrl) => {
+const resolveSocialUrl = (platformKey) => {
   const key = (platformKey || '').toLowerCase()
   if (Array.isArray(props.socialLinks) && props.socialLinks.length > 0) {
     const match = props.socialLinks.find(item => {
@@ -98,9 +100,15 @@ const resolveSocialUrl = (platformKey, fallbackUrl) => {
       const p = (item.platform || item.icon || item.name || '').toLowerCase()
       return p.includes(key)
     })
-    if (match && match.url) return match.url
+    if (match && match.url && match.url.trim() && match.url !== '#' && !match.url.includes('example.com')) {
+      return match.url.trim()
+    }
   }
-  return fallbackUrl
+  const profVal = currentProfile.value[key]
+  if (profVal && typeof profVal === 'string' && profVal.trim() && profVal !== '#' && !profVal.includes('example.com')) {
+    return profVal.trim()
+  }
+  return ''
 }
 
 const scrollToTop = () => {

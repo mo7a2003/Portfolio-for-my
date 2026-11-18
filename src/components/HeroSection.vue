@@ -95,78 +95,22 @@
             </button>
           </div>
 
-          <!-- Cyber Neon Social Connectivity Bar -->
-          <div class="hero-social flex items-center gap-3">
+          <!-- Cyber Neon Social Connectivity Bar (Dynamic: Only present/configured channels) -->
+          <div v-if="activeHeroLinks.length > 0" class="hero-social flex items-center gap-3">
             <span class="text-[11px] font-mono text-slate-400 tracking-wider uppercase hidden sm:inline-block">{{ t.channels }}</span>
             <div class="flex items-center gap-2 p-1.5 rounded-2xl backdrop-blur-xl bg-white/[0.03] border border-white/[0.08]">
-              <!-- WhatsApp -->
               <a 
-                :href="currentProfile.whatsapp || 'https://wa.me/970599000000'" 
+                v-for="link in activeHeroLinks"
+                :key="link.id || link.name"
+                :href="link.url" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="group relative w-9 h-9 rounded-xl bg-[#090b14]/90 border border-white/[0.08] text-slate-400 hover:text-emerald-400 hover:border-emerald-400/60 hover:bg-emerald-500/10 hover:shadow-[0_0_18px_rgba(16,185,129,0.45)] flex items-center justify-center transition-all duration-300"
-                aria-label="WhatsApp"
-                title="WhatsApp"
+                class="group relative w-9 h-9 rounded-xl bg-[#090b14]/90 border border-white/[0.08] text-slate-400 flex items-center justify-center transition-all duration-300"
+                :class="link.hoverClass"
+                :aria-label="link.name"
+                :title="link.name"
               >
-                <svg class="w-4 h-4 fill-current transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                </svg>
-              </a>
-
-              <!-- LinkedIn -->
-              <a 
-                :href="currentProfile.linkedin || 'https://linkedin.com'" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="group relative w-9 h-9 rounded-xl bg-[#090b14]/90 border border-white/[0.08] text-slate-400 hover:text-[#00f2fe] hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:shadow-[0_0_18px_rgba(0,242,254,0.45)] flex items-center justify-center transition-all duration-300"
-                aria-label="LinkedIn"
-                title="LinkedIn"
-              >
-                <svg class="w-4 h-4 fill-current transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                </svg>
-              </a>
-
-              <!-- Instagram -->
-              <a 
-                :href="currentProfile.instagram || 'https://instagram.com'" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="group relative w-9 h-9 rounded-xl bg-[#090b14]/90 border border-white/[0.08] text-slate-400 hover:text-pink-400 hover:border-pink-400/60 hover:bg-pink-500/10 hover:shadow-[0_0_18px_rgba(236,72,153,0.45)] flex items-center justify-center transition-all duration-300"
-                aria-label="Instagram"
-                title="Instagram"
-              >
-                <svg class="w-4 h-4 fill-current transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                </svg>
-              </a>
-
-              <!-- X / Twitter -->
-              <a 
-                :href="currentProfile.x || 'https://x.com'" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="group relative w-9 h-9 rounded-xl bg-[#090b14]/90 border border-white/[0.08] text-slate-400 hover:text-white hover:border-white/60 hover:bg-white/10 hover:shadow-[0_0_18px_rgba(255,255,255,0.45)] flex items-center justify-center transition-all duration-300"
-                aria-label="X (Twitter)"
-                title="X (Twitter)"
-              >
-                <svg class="w-3.5 h-3.5 fill-current transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-
-              <!-- Facebook -->
-              <a 
-                :href="currentProfile.facebook || 'https://facebook.com'" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="group relative w-9 h-9 rounded-xl bg-[#090b14]/90 border border-white/[0.08] text-slate-400 hover:text-[#7c3aed] hover:border-[#7c3aed]/60 hover:bg-[#7c3aed]/10 hover:shadow-[0_0_18px_rgba(124,58,237,0.45)] flex items-center justify-center transition-all duration-300"
-                aria-label="Facebook"
-                title="Facebook"
-              >
-                <svg class="w-4 h-4 fill-current transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
+                <span class="w-4 h-4 flex items-center justify-center pointer-events-none" v-html="link.svg"></span>
               </a>
             </div>
           </div>
@@ -277,6 +221,124 @@ const emit = defineEmits(['open-project'])
 
 const currentProfile = computed(() => {
   return Object.keys(props.profile || {}).length ? { ...personalInfo, ...props.profile } : personalInfo
+})
+
+// Dynamically filter & display only social platforms that are present in the Database or Profile
+const activeHeroLinks = computed(() => {
+  const profile = currentProfile.value || {}
+  const list = []
+
+  const candidatePlatforms = [
+    {
+      id: 'whatsapp',
+      name: 'WhatsApp',
+      keywords: ['whatsapp', 'wa'],
+      profileUrl: profile.whatsapp,
+      hoverClass: 'hover:text-emerald-400 hover:border-emerald-400/60 hover:bg-emerald-500/10 hover:shadow-[0_0_18px_rgba(16,185,129,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>`
+    },
+    {
+      id: 'github',
+      name: 'GitHub',
+      keywords: ['github', 'git'],
+      profileUrl: profile.github,
+      hoverClass: 'hover:text-white hover:border-white/60 hover:bg-white/10 hover:shadow-[0_0_18px_rgba(255,255,255,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>`
+    },
+    {
+      id: 'linkedin',
+      name: 'LinkedIn',
+      keywords: ['linkedin'],
+      profileUrl: profile.linkedin,
+      hoverClass: 'hover:text-[#00f2fe] hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:shadow-[0_0_18px_rgba(0,242,254,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>`
+    },
+    {
+      id: 'telegram',
+      name: 'Telegram',
+      keywords: ['telegram', 'tg'],
+      profileUrl: profile.telegram,
+      hoverClass: 'hover:text-[#00f2fe] hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:shadow-[0_0_18px_rgba(0,242,254,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`
+    },
+    {
+      id: 'discord',
+      name: 'Discord',
+      keywords: ['discord'],
+      profileUrl: profile.discord,
+      hoverClass: 'hover:text-[#818cf8] hover:border-[#818cf8]/60 hover:bg-[#818cf8]/10 hover:shadow-[0_0_18px_rgba(129,140,248,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>`
+    },
+    {
+      id: 'x',
+      name: 'X (Twitter)',
+      keywords: ['x', 'twitter'],
+      profileUrl: profile.x || profile.twitter,
+      hoverClass: 'hover:text-amber-400 hover:border-amber-400/60 hover:bg-amber-400/10 hover:shadow-[0_0_18px_rgba(245,158,11,0.45)]',
+      svg: `<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`
+    },
+    {
+      id: 'instagram',
+      name: 'Instagram',
+      keywords: ['instagram', 'ig'],
+      profileUrl: profile.instagram,
+      hoverClass: 'hover:text-pink-400 hover:border-pink-400/60 hover:bg-pink-500/10 hover:shadow-[0_0_18px_rgba(236,72,153,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`
+    },
+    {
+      id: 'facebook',
+      name: 'Facebook',
+      keywords: ['facebook', 'fb'],
+      profileUrl: profile.facebook,
+      hoverClass: 'hover:text-[#60a5fa] hover:border-[#60a5fa]/60 hover:bg-[#60a5fa]/10 hover:shadow-[0_0_18px_rgba(96,165,250,0.45)]',
+      svg: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`
+    }
+  ]
+
+  for (const item of candidatePlatforms) {
+    let resolvedUrl = ''
+    if (Array.isArray(props.socialLinks) && props.socialLinks.length > 0) {
+      const match = props.socialLinks.find((s) => {
+        if (s.is_active === false || s.is_active === 0) return false
+        const p = (s.platform || s.name || '').toLowerCase()
+        return item.keywords.some((k) => p.includes(k))
+      })
+      if (match && match.url && typeof match.url === 'string' && match.url.trim() && match.url !== '#' && !match.url.includes('example.com')) {
+        resolvedUrl = match.url.trim()
+      }
+    }
+    if (!resolvedUrl && item.profileUrl && typeof item.profileUrl === 'string' && item.profileUrl.trim() && item.profileUrl !== '#' && !item.profileUrl.includes('example.com')) {
+      resolvedUrl = item.profileUrl.trim()
+    }
+
+    if (resolvedUrl) {
+      list.push({
+        ...item,
+        url: resolvedUrl
+      })
+    }
+  }
+
+  // Also include any other active custom platforms from props.socialLinks
+  if (Array.isArray(props.socialLinks)) {
+    const knownKeys = ['whatsapp', 'wa', 'github', 'git', 'linkedin', 'telegram', 'tg', 'discord', 'x', 'twitter', 'instagram', 'ig', 'facebook', 'fb']
+    props.socialLinks.forEach((s) => {
+      if (s.is_active === false || s.is_active === 0) return
+      const p = (s.platform || s.name || '').toLowerCase()
+      const isKnown = knownKeys.some((k) => p.includes(k))
+      if (!isKnown && s.url && typeof s.url === 'string' && s.url.trim() && s.url !== '#' && !s.url.includes('example.com')) {
+        list.push({
+          id: s.id || p,
+          name: s.name || s.platform,
+          url: s.url.trim(),
+          hoverClass: 'hover:text-cyan-400 hover:border-cyan-400/60 hover:bg-cyan-500/10 hover:shadow-[0_0_18px_rgba(0,242,254,0.45)]',
+          svg: `<svg class="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>`
+        })
+      }
+    })
+  }
+
+  return list
 })
 
 const resolveSocialUrl = (platformKey, fallbackUrl) => {
