@@ -125,6 +125,7 @@ import { personalInfo, projects as defaultProjects, skills as defaultSkills, def
 import { portfolioService, normalizeProject, normalizeSkill } from '../services/portfolioService'
 import { profileState, setProfileState, resolveProfileAvatar } from '../services/profileState'
 import { lang, isRtl } from '../services/siteLanguage'
+import { currentTheme, isCyanTheme, toggleTheme as switchGlobalTheme } from '../services/themeState'
 
 // Register GSAP ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)
@@ -177,7 +178,6 @@ const isLoading = ref(false)
 
 const selectedProject = ref(null)
 const isSoundEnabled = ref(false)
-const isCyanTheme = ref(false)
 let lenis = null
 let gsapTickerCallback = null
 
@@ -263,12 +263,7 @@ const toggleSound = () => {
 }
 
 const toggleTheme = () => {
-  isCyanTheme.value = !isCyanTheme.value
-  if (isCyanTheme.value) {
-    document.documentElement.classList.add('theme-cyan')
-  } else {
-    document.documentElement.classList.remove('theme-cyan')
-  }
+  switchGlobalTheme()
   playFuturisticSweep()
 }
 

@@ -244,7 +244,8 @@ export function normalizeCertificate(c) {
     badge_ar: c.badge_ar || c.badgeAr || '',
     hash: c.hash || `ID // VERIFIED-${issueDate}`,
     accent: c.accent || '#f59e0b',
-    image: resolveAssetUrl(c.image || c.image_url || '')
+    image: resolveAssetUrl(c.image || c.image_url || c.scan || c.file || c.preview || ''),
+    image_url: resolveAssetUrl(c.image_url || c.image || c.scan || c.file || c.preview || '')
   }
 }
 
@@ -370,9 +371,17 @@ export const portfolioService = {
       )
       if (!rawCertificates.length) {
         try {
-          const cachedCerts = localStorage.getItem('cached_portfolio_certificates')
-          if (cachedCerts) rawCertificates = JSON.parse(cachedCerts)
+          const directCerts = await apiClient.get('/certificates').catch(() => apiClient.get('/admin/certificates'))
+          const list = extractArray(directCerts, 'certificates')
+          if (list && list.length) rawCertificates = list
         } catch {}
+
+        if (!rawCertificates.length) {
+          try {
+            const cachedCerts = localStorage.getItem('cached_portfolio_certificates')
+            if (cachedCerts) rawCertificates = JSON.parse(cachedCerts)
+          } catch {}
+        }
       } else {
         try {
           localStorage.setItem('cached_portfolio_certificates', JSON.stringify(rawCertificates))

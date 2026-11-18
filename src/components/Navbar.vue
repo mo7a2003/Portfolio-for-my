@@ -1,49 +1,49 @@
 <template>
   <header 
-    class="navbar-floating fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-3 sm:px-6 lg:px-8"
-    :class="[isScrolled ? 'pt-3 pb-2' : 'pt-5 pb-3']"
+    class="navbar-floating fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-3 sm:px-6 lg:px-8"
+    :class="[isScrolled ? 'pt-2.5 pb-2' : 'pt-4 pb-3']"
   >
     <div 
-      class="max-w-7xl mx-auto rounded-full transition-all duration-500 px-4 sm:px-6 py-2.5 flex items-center justify-between"
+      class="max-w-7xl mx-auto rounded-2xl sm:rounded-full transition-all duration-300 px-3.5 sm:px-5 py-2 flex items-center justify-between gap-3 sm:gap-4"
       :class="[
         isScrolled 
-          ? 'bg-[#05060b]/85 backdrop-blur-2xl border border-white/[0.1] shadow-[0_20px_50px_rgba(0,0,0,0.75),_0_0_25px_rgba(245,158,11,0.12)]' 
-          : 'bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] shadow-[0_10px_30px_rgba(0,0,0,0.4)]'
+          ? 'bg-slate-950/80 backdrop-blur-2xl border border-slate-800/90 shadow-[0_15px_40px_rgba(0,0,0,0.7)]' 
+          : 'bg-slate-950/50 backdrop-blur-xl border border-white/[0.08] shadow-[0_10px_30px_rgba(0,0,0,0.35)]'
       ]"
     >
-      <!-- Left: Avatar Brand Pill -->
+      <!-- Left: Logo & Profile Brand -->
       <a 
         href="#hero" 
         @click.prevent="scrollTo({ name: 'Home', href: '#hero' })"
-        class="flex items-center gap-3 group focus:outline-none cursor-pointer"
+        class="flex items-center gap-2.5 sm:gap-3 group focus:outline-none cursor-pointer shrink-0"
       >
-        <div class="relative w-10 h-10 rounded-full p-[1.5px] bg-gradient-to-tr from-[#ff5500] via-amber-400 to-[#00f2fe] shadow-[0_0_20px_rgba(255,85,0,0.45)] group-hover:scale-105 transition-transform duration-300">
+        <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl p-[1.5px] bg-gradient-to-tr from-[#ff5500] via-amber-400 to-[#00f2fe] shadow-md shadow-cyan-500/10 group-hover:scale-105 transition-transform duration-300 shrink-0">
           <img 
             :src="resolvedAvatarUrl" 
-            :alt="profileState.name || 'Mohammed Alhwaiti'" 
-            class="w-full h-full object-cover rounded-full bg-[#05060b]"
+            :alt="isRtl && (profileState.nameAr || profileState.name_ar) ? (profileState.nameAr || profileState.name_ar) : (profileState.name || 'Mohammed Alhwaiti')" 
+            class="w-full h-full object-cover rounded-[10px] bg-slate-950"
             @error="(e) => e.target.src = '/developer-portrait.jpg'"
           />
-          <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#05060b] shadow-[0_0_8px_#34d399]"></div>
+          <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#34d399]"></div>
         </div>
-        <div class="flex flex-col">
-          <span class="text-sm font-extrabold tracking-wide text-white group-hover:text-amber-300 transition-colors">
-            {{ profileState.name || 'Mohammed Alhwaiti' }}
+        <div class="flex flex-col text-left" :class="isRtl ? 'text-right' : 'text-left'">
+          <span class="text-xs sm:text-sm font-bold tracking-tight text-white group-hover:text-amber-300 transition-colors whitespace-nowrap">
+            {{ isRtl && (profileState.nameAr || profileState.name_ar) ? (profileState.nameAr || profileState.name_ar) : (profileState.name || 'Mohammed Alhwaiti') }}
           </span>
-          <span class="text-[10px] font-mono text-[#00f2fe] tracking-widest uppercase hidden sm:block">
-            {{ profileState.title || '3D & FRONT-END ARCHITECT' }}
+          <span class="text-[10px] sm:text-[11px] font-mono text-cyan-400 font-medium tracking-wide hidden sm:block whitespace-nowrap">
+            {{ isRtl && (profileState.title_ar || profileState.titleAr) ? (profileState.title_ar || profileState.titleAr) : (profileState.title || 'Front-End & 3D Architect') }}
           </span>
         </div>
       </a>
 
-      <!-- Center: Desktop Floating Glass Navigation Links with Sliding Active Pill -->
+      <!-- Center: Navigation Links (Clean, Centered & Non-Crowded) -->
       <nav 
         ref="navContainerRef"
-        class="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-[#05060b]/80 border border-white/[0.08] backdrop-blur-xl shadow-inner relative"
+        class="hidden lg:flex items-center gap-1 bg-slate-900/60 border border-slate-800/90 px-3 py-1.5 rounded-full shadow-inner relative"
       >
         <!-- Sliding Active Pill Indicator -->
         <div 
-          class="absolute top-1.5 bottom-1.5 rounded-full bg-gradient-to-r from-[#ff5500]/25 via-amber-500/20 to-[#f59e0b]/25 border border-amber-400/50 shadow-[0_0_20px_rgba(255,85,0,0.35)] transition-all duration-300 ease-out pointer-events-none"
+          class="absolute top-1 bottom-1 rounded-full bg-gradient-to-r from-amber-500/25 via-amber-400/20 to-cyan-500/20 border border-amber-400/40 shadow-[0_0_15px_rgba(245,158,11,0.25)] transition-all duration-300 ease-out pointer-events-none"
           :style="slidingPillStyle"
         ></div>
 
@@ -53,67 +53,54 @@
           :ref="(el) => setLinkRef(el, item.key)"
           :href="item.href"
           @click.prevent="scrollTo(item)"
-          class="relative z-10 px-4 py-1.5 text-xs font-semibold tracking-wide transition-colors duration-300 rounded-full cursor-pointer select-none"
+          class="relative z-10 px-3 py-1 text-xs font-medium tracking-normal transition-all duration-200 rounded-full cursor-pointer select-none whitespace-nowrap"
           :class="[
             activeNav === item.key 
-              ? 'text-amber-300' 
-              : 'text-slate-300 hover:text-white'
+              ? 'text-amber-300 font-semibold shadow-sm' 
+              : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
           ]"
         >
           <span>{{ item.name }}</span>
-          <span 
-            v-if="activeNav === item.key" 
-            class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"
-          ></span>
         </a>
       </nav>
 
-      <!-- Right: Theme Switcher, Sound & Magnetic CTA Button -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Neon Accent Theme Switcher (Gold/Eclipse ↔ Cyan) -->
+      <!-- Right: Action Controls (Theme, Language, Sound, CTA) -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Theme Toggle Button -->
         <button
-          @click="$emit('toggle-theme')"
-          :title="isCyanTheme ? 'Switch to Neon Eclipse Accent' : 'Switch to Cyber Cyan Accent'"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-xs font-mono font-medium cursor-pointer"
+          type="button"
+          @click="onToggleTheme"
+          :title="isCyanTheme ? 'Switch to Eclipse Mode' : 'Switch to Cyan Mode'"
+          class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 shadow-sm border cursor-pointer select-none active:scale-95"
           :class="isCyanTheme 
-            ? 'bg-cyan-500/15 border-cyan-400/50 text-cyan-300 shadow-[0_0_15px_rgba(0,242,254,0.35)]' 
-            : 'bg-amber-500/15 border-amber-400/50 text-amber-300 shadow-[0_0_15px_rgba(255,85,0,0.35)]'"
+            ? 'text-cyan-300 bg-cyan-950/40 border-cyan-500/40 hover:bg-cyan-900/50 shadow-[0_0_12px_rgba(0,242,254,0.25)]' 
+            : 'text-amber-300 bg-amber-950/40 border-amber-500/40 hover:bg-amber-900/50 shadow-[0_0_12px_rgba(245,158,11,0.2)]'"
         >
-          <span v-if="isCyanTheme" class="flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span class="hidden sm:inline">Cyan</span>
-            <span>⚡</span>
-          </span>
-          <span v-else class="flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#ff5500] animate-pulse"></span>
-            <span class="hidden sm:inline">Eclipse</span>
-            <span>👑</span>
-          </span>
+          <span>{{ isCyanTheme ? '⚡ Cyan' : '👑 Eclipse' }}</span>
         </button>
 
-        <!-- Sound Effect Toggle -->
+        <!-- Language Toggle Button -->
         <button
+          type="button"
+          @click="toggleLang"
+          :title="lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'"
+          class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-cyan-300 bg-cyan-950/30 border border-cyan-500/30 rounded-xl hover:bg-cyan-900/40 hover:border-cyan-400 transition-all flex items-center gap-1.5 shadow-sm cursor-pointer select-none active:scale-95"
+        >
+          <span>{{ lang === 'ar' ? 'English 🇺🇸' : 'العربية 🇸🇦' }}</span>
+        </button>
+
+        <!-- Sound Effect Toggle (Compact) -->
+        <button
+          type="button"
           @click="$emit('toggle-sound')"
-          :title="isSoundEnabled ? 'Mute futuristic sound effects' : 'Enable futuristic sound effects'"
-          class="p-2 rounded-full border border-white/[0.08] bg-white/[0.03] hover:border-amber-500/40 text-slate-300 hover:text-amber-300 transition-colors text-xs cursor-pointer"
+          :title="isSoundEnabled ? 'Mute sound effects' : 'Enable sound effects'"
+          class="p-1.5 sm:p-2 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 transition-colors text-xs cursor-pointer select-none hidden sm:inline-flex"
         >
           <span v-if="isSoundEnabled">🔊</span>
           <span v-else>🔇</span>
         </button>
 
-        <!-- Bilingual Language Switcher Pill (🌐 AR / EN) -->
-        <button
-          type="button"
-          @click="toggleLang"
-          :title="lang === 'en' ? 'التبديل إلى اللغة العربية' : 'Switch to English'"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.08] hover:border-amber-400/50 bg-white/[0.03] hover:bg-amber-500/10 text-slate-200 hover:text-amber-300 transition-all text-xs font-mono font-semibold cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.1)] active:scale-95"
-        >
-          <span class="text-xs">🌐</span>
-          <span class="font-bold tracking-wider text-amber-300">{{ t.langCode }}</span>
-          <span class="hidden xl:inline text-[10px] text-slate-400 font-normal">({{ t.langLabel }})</span>
-        </button>
-
-        <!-- Magnetic "Let's Connect" CTA Button -->
+        <!-- Let's Connect CTA Button -->
         <a 
           ref="ctaBtnRef"
           href="#contact" 
@@ -121,18 +108,19 @@
           @mousemove="handleMagneticMove"
           @mouseleave="resetMagneticMove"
           :style="magneticStyle"
-          class="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold tracking-wider text-white bg-gradient-to-r from-[#ff5500] via-amber-500 to-[#f59e0b] border border-amber-300/40 shadow-[0_0_24px_rgba(255,85,0,0.45)] hover:shadow-[0_0_32px_rgba(255,85,0,0.75)] transition-shadow cursor-pointer group"
+          class="hidden xl:inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 rounded-xl transition-all shadow-md shadow-amber-500/20 cursor-pointer select-none shrink-0"
         >
           <span>{{ t.navConnect }}</span>
-          <svg class="w-3.5 h-3.5 text-white transform rotate-45 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3.5 h-3.5 text-slate-950 transform rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
         </a>
 
-        <!-- Mobile Menu Toggle Button -->
+        <!-- Mobile Menu Hamburger Button -->
         <button 
+          type="button"
           @click="isMobileMenuOpen = !isMobileMenuOpen"
-          class="md:hidden p-2 rounded-full bg-white/[0.05] border border-white/10 text-slate-300 hover:text-white"
+          class="lg:hidden p-2 rounded-xl bg-slate-900/70 border border-slate-800 text-slate-300 hover:text-white cursor-pointer"
           aria-label="Toggle Navigation"
         >
           <svg v-if="!isMobileMenuOpen" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,7 +136,7 @@
     <!-- Mobile Dropdown Navigation -->
     <div 
       v-if="isMobileMenuOpen" 
-      class="md:hidden mt-2 mx-auto max-w-7xl px-4 pt-3 pb-5 rounded-3xl bg-[#05060b]/95 border border-white/10 backdrop-blur-2xl shadow-2xl animate-fadeIn"
+      class="lg:hidden mt-2 mx-auto max-w-7xl px-4 pt-3 pb-5 rounded-2xl bg-slate-950/95 border border-slate-800 backdrop-blur-2xl shadow-2xl animate-fadeIn"
     >
       <div class="flex flex-col gap-1.5">
         <a 
@@ -159,34 +147,45 @@
           class="px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between"
           :class="[
             activeNav === item.key 
-              ? 'text-amber-300 bg-gradient-to-r from-[#ff5500]/20 to-amber-500/10 border-l-4 border-[#ff5500]' 
-              : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              ? 'text-amber-300 bg-amber-500/10 border-l-4 border-amber-400' 
+              : 'text-slate-300 hover:bg-slate-900 hover:text-white'
           ]"
         >
           <span>{{ item.name }}</span>
-          <span v-if="activeNav === item.key" class="w-2 h-2 rounded-full bg-[#ff5500] shadow-[0_0_8px_#ff5500]"></span>
+          <span v-if="activeNav === item.key" class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
         </a>
 
-        <!-- Mobile Language Switcher Action -->
-        <div class="pt-3 pb-1 border-t border-white/10 mt-1 flex items-center justify-between px-2">
-          <span class="text-xs font-mono text-slate-400">Language / اللغة</span>
-          <button 
-            type="button" 
-            @click="toggleLang" 
-            class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 text-amber-300 text-xs font-bold font-mono shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+        <!-- Mobile Controls & Let's Connect -->
+        <div class="pt-3 border-t border-slate-800 mt-2 flex flex-col gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              @click="onToggleTheme"
+              class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all cursor-pointer"
+              :class="isCyanTheme 
+                ? 'text-cyan-300 bg-cyan-950/40 border-cyan-500/40' 
+                : 'text-amber-300 bg-amber-950/40 border-amber-500/40'"
+            >
+              {{ isCyanTheme ? '⚡ Cyan Mode' : '👑 Eclipse Mode' }}
+            </button>
+
+            <button
+              type="button"
+              @click="$emit('toggle-sound')"
+              class="py-2 px-3 text-xs font-semibold rounded-xl border border-slate-800 bg-slate-900 text-slate-300 cursor-pointer"
+            >
+              {{ isSoundEnabled ? '🔊 Sound On' : '🔇 Sound Off' }}
+            </button>
+          </div>
+
+          <a 
+            href="#contact" 
+            @click.prevent="scrollTo({ key: 'Contact', name: t.navContact, href: '#contact' })"
+            class="text-center py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-500 shadow-lg shadow-amber-500/20 cursor-pointer"
           >
-            <span>🌐</span>
-            <span>{{ t.switchLanguage }}</span>
-          </button>
+            {{ t.navConnect }} 🚀
+          </a>
         </div>
-
-        <a 
-          href="#contact" 
-          @click.prevent="scrollTo({ key: 'Contact', name: t.navContact, href: '#contact' })"
-          class="mt-2 text-center py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#ff5500] to-amber-500 shadow-[0_0_20px_rgba(255,85,0,0.4)]"
-        >
-          {{ t.navConnect }} 🚀
-        </a>
       </div>
     </div>
   </header>
@@ -196,6 +195,7 @@
 import { ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { profileState, resolveProfileAvatar } from '@/services/profileState'
 import { lang, isRtl, toggleLang, t } from '@/services/siteLanguage'
+import { isCyanTheme, toggleTheme as switchGlobalTheme } from '@/services/themeState'
 
 const props = defineProps({
   avatarUrl: {
@@ -212,14 +212,19 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['toggle-sound', 'toggle-theme'])
+
+const onToggleTheme = () => {
+  switchGlobalTheme()
+  emit('toggle-theme')
+}
+
 const resolvedAvatarUrl = computed(() => {
   return resolveProfileAvatar({
     ...profileState,
     ...(props.avatarUrl ? { avatar: props.avatarUrl } : {})
   })
 })
-
-defineEmits(['toggle-sound', 'toggle-theme'])
 
 const isScrolled = ref(false)
 const isMobileMenuOpen = ref(false)
@@ -238,7 +243,7 @@ const navLinks = computed(() => [
 // Sliding Pill Indicator
 const navContainerRef = ref(null)
 const linkRefs = reactive({})
-const slidingPillStyle = ref({ left: '6px', width: '68px', opacity: 1 })
+const slidingPillStyle = ref({ left: '6px', width: '60px', opacity: 1 })
 
 const setLinkRef = (el, name) => {
   if (el) linkRefs[name] = el

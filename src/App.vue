@@ -23,6 +23,7 @@
 <script setup>
 import { reactive, onMounted, onBeforeUnmount } from 'vue'
 import CyberBackgroundCanvas from './components/CyberBackgroundCanvas.vue'
+import { initTheme } from './services/themeState'
 
 const mousePos = reactive({ x: -200, y: -200 })
 
@@ -32,6 +33,7 @@ const onMouseMove = (e) => {
 }
 
 onMounted(() => {
+  initTheme()
   window.addEventListener('mousemove', onMouseMove)
 })
 

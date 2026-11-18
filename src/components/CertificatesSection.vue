@@ -109,13 +109,32 @@
               <strong class="text-white">{{ cert.project }}</strong>
             </div>
 
+            <!-- Certificate Preview Image (If uploaded) -->
+            <div 
+              v-if="cert.image_url || cert.image" 
+              class="mb-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 h-36 relative group/img cursor-pointer"
+              @click.stop="openImageModal(resolveAssetUrl(cert.image_url || cert.image))"
+            >
+              <img 
+                :src="resolveAssetUrl(cert.image_url || cert.image)" 
+                :alt="getLocalized(cert, 'title', cert.title)" 
+                class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500" 
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-end p-3 justify-between pointer-events-none">
+                <span class="text-[11px] font-mono text-cyan-300 font-semibold flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <span>Click to inspect scan</span>
+                </span>
+              </div>
+            </div>
+
             <p class="text-xs sm:text-sm text-slate-300/85 leading-relaxed mb-5">
               {{ getLocalized(cert, 'description', cert.description) }}
             </p>
           </div>
 
-          <!-- Bottom Row: Skill Tags & Inspect Credential Button -->
-          <div class="relative z-10 pt-4 border-t border-white/[0.07] flex flex-wrap items-center justify-between gap-3">
+          <!-- Bottom Row: Skill Tags & Action Buttons -->
+          <div class="relative z-10 pt-4 border-t border-white/[0.07] flex flex-wrap items-center justify-between gap-2.5">
             <div class="flex flex-wrap items-center gap-1.5">
               <span
                 v-for="tag in (cert.tags || []).slice(0, 3)"
@@ -126,14 +145,27 @@
               </span>
             </div>
 
-            <button
-              type="button"
-              @click.stop="selectedCertificate = cert"
-              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-[#ff5500]/20 hover:from-[#ff5500] hover:to-amber-500 border border-amber-500/40 text-amber-300 hover:text-slate-950 font-mono font-bold text-xs transition-all duration-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] cursor-pointer shrink-0"
-            >
-              <span>Inspect Credential</span>
-              <span>↗</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <button
+                v-if="cert.image_url || cert.image"
+                type="button"
+                @click.stop="openImageModal(resolveAssetUrl(cert.image_url || cert.image))"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/30 text-cyan-300 font-mono text-[11px] font-semibold transition-all cursor-pointer shrink-0 shadow-sm"
+                title="Inspect uploaded scan image"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span>Inspect Image</span>
+              </button>
+
+              <button
+                type="button"
+                @click.stop="selectedCertificate = cert"
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-[#ff5500]/20 hover:from-[#ff5500] hover:to-amber-500 border border-amber-500/40 text-amber-300 hover:text-slate-950 font-mono font-bold text-xs transition-all duration-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] cursor-pointer shrink-0"
+              >
+                <span>Inspect Credential</span>
+                <span>↗</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -199,6 +231,26 @@
               {{ getLocalized(selectedCertificate, 'description', selectedCertificate.description) }}
             </p>
 
+            <!-- Uploaded Certificate Scan / Image (If available) -->
+            <div 
+              v-if="selectedCertificate.image_url || selectedCertificate.image" 
+              class="my-4 overflow-hidden rounded-2xl border border-amber-500/30 bg-slate-950/80 max-h-56 relative group/modalimg cursor-pointer"
+              @click="openImageModal(resolveAssetUrl(selectedCertificate.image_url || selectedCertificate.image))"
+            >
+              <img 
+                :src="resolveAssetUrl(selectedCertificate.image_url || selectedCertificate.image)" 
+                :alt="getLocalized(selectedCertificate, 'title', selectedCertificate.title)" 
+                class="w-full h-full max-h-56 object-contain group-hover/modalimg:scale-102 transition-transform duration-300" 
+              />
+              <button
+                type="button"
+                @click.stop="openImageModal(resolveAssetUrl(selectedCertificate.image_url || selectedCertificate.image))"
+                class="absolute bottom-2.5 right-2.5 px-3 py-1 text-[11px] font-mono font-semibold bg-slate-950/85 hover:bg-cyan-950 border border-cyan-500/40 text-cyan-300 rounded-lg shadow-lg cursor-pointer flex items-center gap-1.5 transition-colors"
+              >
+                <span>View Full Scan 🔍</span>
+              </button>
+            </div>
+
             <!-- Digital Seal & Signature Row -->
             <div class="pt-5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-4 text-left font-mono text-[10px]">
               <div>
@@ -228,6 +280,15 @@
             </div>
 
             <div class="flex items-center gap-2 ml-auto">
+              <button
+                v-if="selectedCertificate.image_url || selectedCertificate.image"
+                type="button"
+                @click="openImageModal(resolveAssetUrl(selectedCertificate.image_url || selectedCertificate.image))"
+                class="px-4 py-2 rounded-xl bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Inspect Scan</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
               <a
                 v-if="selectedCertificate.url"
                 :href="selectedCertificate.url"
@@ -249,12 +310,50 @@
         </div>
       </div>
     </Transition>
+
+    <!-- ======================================================== -->
+    <!-- HIGH-RES ENLARGED CERTIFICATE LIGHTBOX MODAL             -->
+    <!-- ======================================================== -->
+    <Transition name="cert-modal">
+      <div 
+        v-if="selectedImage" 
+        class="fixed inset-0 z-[70] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6" 
+        @click="selectedImage = null"
+      >
+        <div 
+          class="relative max-w-4xl w-full bg-slate-900/95 border border-amber-500/40 rounded-3xl p-4 sm:p-6 shadow-[0_0_80px_rgba(245,158,11,0.25)] overflow-hidden" 
+          @click.stop
+        >
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+            <span class="text-xs font-mono text-cyan-300 font-bold uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              <span>High-Resolution Verified Credential Scan</span>
+            </span>
+            <button 
+              type="button"
+              @click="selectedImage = null" 
+              class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-red-500/20 text-slate-300 hover:text-white border border-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+          <div class="max-h-[80vh] overflow-auto flex items-center justify-center rounded-2xl bg-black/60 p-2 sm:p-4">
+            <img 
+              :src="selectedImage" 
+              alt="Enlarged Certificate Scan" 
+              class="w-full h-auto max-h-[74vh] object-contain rounded-xl mx-auto shadow-2xl" 
+            />
+          </div>
+        </div>
+      </div>
+    </Transition>
   </section>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
+import { resolveAssetUrl } from '@/services/portfolioService'
 
 const props = defineProps({
   certificates: {
@@ -264,6 +363,13 @@ const props = defineProps({
 })
 
 const selectedCertificate = ref(null)
+const selectedImage = ref(null)
+
+const openImageModal = (imgUrl) => {
+  if (imgUrl) {
+    selectedImage.value = imgUrl
+  }
+}
 
 const defaultCertificates = [
   {
