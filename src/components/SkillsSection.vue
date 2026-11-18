@@ -7,10 +7,10 @@
         <div>
           <div class="section-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] text-amber-400 font-mono text-xs tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(255,85,0,0.15)]">
             <span class="w-2 h-2 rounded-full bg-[#ff5500] animate-pulse"></span>
-            <span>// 3D SPATIAL SKILLS MATRIX</span>
+            <span>{{ t.skillsSubtitle }}</span>
           </div>
           <h2 class="section-title text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-            Skills &amp; <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-[#00f2fe]">Technologies</span>
+            {{ t.skillsTitle }} <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-[#00f2fe]">{{ t.skillsTitleHighlight }}</span>
           </h2>
         </div>
         <p class="mt-4 md:mt-0 text-slate-400 max-w-md text-sm sm:text-base leading-relaxed">
@@ -234,11 +234,11 @@
           <!-- Skill Name & Meta Row -->
           <div class="min-w-0 flex-1 pr-3">
             <h4 class="truncate text-xs sm:text-[13px] font-bold text-white group-hover:text-amber-300 transition-colors">
-              {{ skill.name }}
+              {{ getLocalized(skill, 'name', skill.name) }}
             </h4>
             <div class="mt-0.5 flex items-center justify-between">
               <span class="truncate font-mono text-[10px] text-slate-400">
-                {{ skill.category || 'Core Tech' }}
+                {{ getLocalized(skill, 'category', skill.category || 'Core Tech') }}
               </span>
               <span class="font-mono text-[10px] font-semibold text-cyan-400">
                 {{ getProficiencyPercent(skill.level || skill.proficiency) }}%
@@ -282,7 +282,7 @@
 
               <!-- Skill Name -->
               <span class="text-xs font-bold text-white tracking-wide whitespace-nowrap group-hover/mpill:text-amber-300 transition-colors">
-                {{ skill.name }}
+                {{ getLocalized(skill, 'name', skill.name) }}
               </span>
 
               <!-- Level% Chip -->
@@ -303,12 +303,12 @@
             >
               <!-- Category Tag -->
               <span class="font-mono text-[10px] text-[#00f2fe] tracking-wider uppercase whitespace-nowrap">
-                // {{ skill.category || 'CORE TECH' }}
+                // {{ getLocalized(skill, 'category', skill.category || 'CORE TECH') }}
               </span>
 
               <!-- Skill Name -->
               <span class="text-xs font-bold text-slate-200 whitespace-nowrap group-hover/mpill2:text-white transition-colors">
-                {{ skill.name }}
+                {{ getLocalized(skill, 'name', skill.name) }}
               </span>
 
               <!-- [60FPS READY] Telemetry Badge -->
@@ -327,6 +327,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { skills as defaultSkills } from '../data/portfolioData'
+import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
 
 const props = defineProps({
   skills: {

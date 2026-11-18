@@ -197,6 +197,55 @@
           ></textarea>
         </div>
 
+        <!-- Arabic Persona & Biography (AR) -->
+        <div class="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-4">
+          <div class="flex items-center gap-2 text-xs font-mono text-amber-400 font-bold">
+            <span>🌐 Arabic Persona & Bio (البيانات الشخصية بالعربية)</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-slate-300 mb-1.5">الاسم الكامل بالعربية</label>
+              <input
+                v-model="form.nameAr"
+                type="text"
+                dir="rtl"
+                placeholder="محمد الحويطي"
+                class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-slate-300 mb-1.5">المسمى المهني بالعربية</label>
+              <input
+                v-model="form.titleAr"
+                type="text"
+                dir="rtl"
+                placeholder="مهندس واجهات أمامية ومعماري رسوميات ثلاثية الأبعاد"
+                class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-mono text-slate-300 mb-1.5">الموقع الجغرافي بالعربية</label>
+            <input
+              v-model="form.locationAr"
+              type="text"
+              dir="rtl"
+              placeholder="المملكة العربية السعودية / عن بُعد"
+              class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-mono text-slate-300 mb-1.5">النبذة الشخصية الكاملة بالعربية</label>
+            <textarea
+              v-model="form.fullBioAr"
+              rows="4"
+              dir="rtl"
+              placeholder="مطور واجهات أمامية ومصمم واجهات وتجربة مستخدم شغوف بدمج رسوميات WebGL 3D المتطورة..."
+              class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white leading-relaxed outline-none"
+            ></textarea>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -523,6 +572,45 @@
             />
           </div>
 
+          <!-- Arabic Milestone Translation (AR) -->
+          <div class="p-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-3">
+            <div class="flex items-center gap-2 text-xs font-mono text-amber-400 font-bold">
+              <span>🌐 Arabic Milestone (ترجمة المحطة بالعربية)</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-mono text-slate-300 mb-1">عنوان المحطة بالعربية</label>
+                <input
+                  v-model="milestoneForm.title_ar"
+                  type="text"
+                  dir="rtl"
+                  placeholder="مثال: التخرج من الكلية الجامعية (دفعة 2026)"
+                  class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-mono text-slate-300 mb-1">المؤسسة / الجهة بالعربية</label>
+                <input
+                  v-model="milestoneForm.company_ar"
+                  type="text"
+                  dir="rtl"
+                  placeholder="مثال: الكلية الجامعية للعلوم التطبيقية بغزة"
+                  class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-mono text-slate-300 mb-1">الوصف التفصيلي بالعربية</label>
+              <textarea
+                v-model="milestoneForm.description_ar"
+                rows="2"
+                dir="rtl"
+                placeholder="التخرج بدرجة دبلوم مهني في تصميم وتطوير مواقع الويب..."
+                class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white leading-relaxed outline-none resize-none"
+              ></textarea>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-mono text-slate-300 mb-1.5">Period / Year *</label>
@@ -530,7 +618,7 @@
                 v-model="milestoneForm.period"
                 type="text"
                 required
-                placeholder="e.g. 2023 — Present"
+                placeholder="e.g. 2026 or 2023 — Present"
                 class="w-full bg-slate-900 border border-slate-800 focus:border-gold-400 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono outline-none"
               />
             </div>
@@ -719,7 +807,7 @@
                         color: m.color || '#d4af37' 
                       }"
                     >
-                      {{ m.period }}
+                      {{ m.period || m.year || m.date || m.start_date }}
                     </span>
                   </div>
 
@@ -788,11 +876,19 @@ const isMilestoneModalOpen = ref(false)
 const editingMilestoneIndex = ref(null)
 const milestoneForm = ref({
   title: '',
+  title_ar: '',
   period: '',
+  year: '',
+  date: '',
+  start_date: '',
+  completion_date: '',
   company: '',
+  company_ar: '',
   description: '',
+  description_ar: '',
   color: '#d4af37',
-  badge: ''
+  badge: '',
+  badge_ar: ''
 })
 
 const tabs = [
@@ -805,12 +901,17 @@ const form = ref({
   name: personalInfo.name,
   nameAr: personalInfo.nameAr,
   title: personalInfo.title,
+  titleAr: '',
   subtitle: personalInfo.shortBio,
+  subtitleAr: '',
   shortBio: personalInfo.shortBio,
+  shortBioAr: '',
   location: personalInfo.location,
+  locationAr: '',
   email: personalInfo.email,
   whatsapp: personalInfo.whatsapp,
   fullBio: personalInfo.fullBio,
+  fullBioAr: '',
   avatar: personalInfo.avatar,
   portrait: personalInfo.portrait,
   timelineHeader: '2019 — Present',
@@ -841,12 +942,15 @@ const loadAboutData = async () => {
       if (res.name) form.value.name = res.name
       if (res.nameAr || res.name_ar) form.value.nameAr = res.nameAr || res.name_ar
       if (res.title) form.value.title = res.title
+      if (res.titleAr || res.title_ar) form.value.titleAr = res.titleAr || res.title_ar
       if (res.subtitle || res.tagline) form.value.subtitle = res.subtitle || res.tagline
       if (res.shortBio || res.short_bio) form.value.shortBio = res.shortBio || res.short_bio
       if (res.location) form.value.location = res.location
+      if (res.locationAr || res.location_ar) form.value.locationAr = res.locationAr || res.location_ar
       if (res.email) form.value.email = res.email
       if (res.whatsapp) form.value.whatsapp = res.whatsapp
       if (res.fullBio || res.full_bio || res.bio) form.value.fullBio = res.fullBio || res.full_bio || res.bio
+      if (res.fullBioAr || res.full_bio_ar || res.bio_ar) form.value.fullBioAr = res.fullBioAr || res.full_bio_ar || res.bio_ar
       if (res.avatar) form.value.avatar = res.avatar
       if (res.portrait) form.value.portrait = res.portrait
       if (res.timeline_header || res.timelineHeader) form.value.timelineHeader = res.timeline_header || res.timelineHeader
@@ -861,9 +965,21 @@ const loadAboutData = async () => {
         form.value.milestones = (res.milestones || res.timeline).map((m, idx) => ({
           ...m,
           id: m.id || `ms_${idx + 1}`,
-          period: m.period || m.year || m.date || m.time_frame || m.duration || '',
-          year: m.period || m.year || m.date || m.time_frame || m.duration || '',
-          company: m.company || m.organization || m.subtitle || ''
+          title: m.title || '',
+          title_ar: m.title_ar || m.titleAr || '',
+          titleAr: m.title_ar || m.titleAr || '',
+          period: m.period || m.year || m.date || m.time_frame || m.duration || m.start_date || m.completion_date || '',
+          year: m.year || m.period || m.date || m.time_frame || m.duration || m.start_date || m.completion_date || '',
+          date: m.date || m.period || m.year || m.start_date || m.completion_date || '',
+          start_date: m.start_date || m.startDate || m.period || m.year || '',
+          completion_date: m.completion_date || m.completionDate || m.period || m.year || '',
+          company: m.company || m.organization || m.subtitle || '',
+          company_ar: m.company_ar || m.companyAr || '',
+          description: m.description || '',
+          description_ar: m.description_ar || m.descriptionAr || '',
+          color: m.color || '#d4af37',
+          badge: m.badge || '',
+          badge_ar: m.badge_ar || m.badgeAr || ''
         }))
       }
     }
@@ -921,50 +1037,94 @@ const openAddMilestoneModal = () => {
   const defaultPeriod = new Date().getFullYear().toString() + ' — Present'
   milestoneForm.value = {
     title: '',
+    title_ar: '',
     period: defaultPeriod,
     year: defaultPeriod,
     date: defaultPeriod,
+    start_date: defaultPeriod,
+    completion_date: defaultPeriod,
     company: '',
+    company_ar: '',
     description: '',
+    description_ar: '',
     color: '#d4af37',
-    badge: ''
+    badge: '',
+    badge_ar: ''
   }
   isMilestoneModalOpen.value = true
 }
 
 const openEditMilestoneModal = (milestone, idx) => {
   editingMilestoneIndex.value = idx
-  const periodVal = milestone.period || milestone.year || milestone.date || milestone.time_frame || milestone.duration || ''
+  const periodVal = milestone.period || milestone.year || milestone.date || milestone.time_frame || milestone.duration || milestone.start_date || milestone.completion_date || ''
   const companyVal = milestone.company || milestone.organization || milestone.subtitle || ''
+  const companyArVal = milestone.company_ar || milestone.companyAr || ''
   milestoneForm.value = {
     ...milestone,
+    title: milestone.title || '',
+    title_ar: milestone.title_ar || milestone.titleAr || '',
     period: periodVal,
-    year: periodVal,
-    date: periodVal,
-    company: companyVal
+    year: milestone.year || periodVal,
+    date: milestone.date || periodVal,
+    start_date: milestone.start_date || milestone.startDate || periodVal,
+    completion_date: milestone.completion_date || milestone.completionDate || periodVal,
+    company: companyVal,
+    company_ar: companyArVal,
+    description: milestone.description || '',
+    description_ar: milestone.description_ar || milestone.descriptionAr || '',
+    color: milestone.color || '#d4af37',
+    badge: milestone.badge || '',
+    badge_ar: milestone.badge_ar || milestone.badgeAr || ''
   }
   isMilestoneModalOpen.value = true
 }
 
 const saveMilestoneModal = async () => {
-  const periodVal = String(milestoneForm.value.period || milestoneForm.value.year || milestoneForm.value.date || '').trim()
+  const periodVal = String(
+    milestoneForm.value.period || 
+    milestoneForm.value.year || 
+    milestoneForm.value.date || 
+    milestoneForm.value.start_date || 
+    milestoneForm.value.completion_date || 
+    ''
+  ).trim()
   const companyVal = String(milestoneForm.value.company || milestoneForm.value.organization || milestoneForm.value.subtitle || '').trim()
+  const companyArVal = String(milestoneForm.value.company_ar || milestoneForm.value.companyAr || '').trim()
+  const titleVal = String(milestoneForm.value.title || '').trim()
+  const titleArVal = String(milestoneForm.value.title_ar || milestoneForm.value.titleAr || '').trim()
+  const descVal = String(milestoneForm.value.description || '').trim()
+  const descArVal = String(milestoneForm.value.description_ar || milestoneForm.value.descriptionAr || '').trim()
+  const badgeVal = String(milestoneForm.value.badge || '').trim()
+  const badgeArVal = String(milestoneForm.value.badge_ar || milestoneForm.value.badgeAr || '').trim()
 
   const normalizedEntry = {
     ...milestoneForm.value,
     id: milestoneForm.value.id || `ms_${Date.now()}`,
-    title: String(milestoneForm.value.title || '').trim(),
+    title: titleVal,
+    title_ar: titleArVal,
+    titleAr: titleArVal,
     period: periodVal,
     year: periodVal,
     date: periodVal,
     time_frame: periodVal,
     duration: periodVal,
+    start_date: milestoneForm.value.start_date || periodVal,
+    startDate: milestoneForm.value.start_date || periodVal,
+    end_date: milestoneForm.value.end_date || '',
+    endDate: milestoneForm.value.end_date || '',
+    completion_date: milestoneForm.value.completion_date || periodVal,
+    completionDate: milestoneForm.value.completion_date || periodVal,
     company: companyVal,
+    company_ar: companyArVal,
+    companyAr: companyArVal,
     organization: companyVal,
     subtitle: companyVal,
-    description: String(milestoneForm.value.description || '').trim(),
+    description: descVal,
+    description_ar: descArVal,
+    descriptionAr: descArVal,
     color: milestoneForm.value.color || '#d4af37',
-    badge: milestoneForm.value.badge || ''
+    badge: badgeVal || null,
+    badge_ar: badgeArVal || null
   }
 
   if (editingMilestoneIndex.value !== null) {
@@ -1023,23 +1183,44 @@ const saveAll = async () => {
     }
 
     const normalizedMilestones = (form.value.milestones || []).map((m, idx) => {
-      const periodVal = String(m.period || m.year || m.date || m.time_frame || m.duration || '').trim()
+      const periodVal = String(m.period || m.year || m.date || m.time_frame || m.duration || m.start_date || m.completion_date || '').trim()
       const companyVal = String(m.company || m.organization || m.subtitle || '').trim()
+      const companyArVal = String(m.company_ar || m.companyAr || '').trim()
+      const titleVal = String(m.title || '').trim()
+      const titleArVal = String(m.title_ar || m.titleAr || '').trim()
+      const descVal = String(m.description || '').trim()
+      const descArVal = String(m.description_ar || m.descriptionAr || '').trim()
+      const badgeVal = String(m.badge || '').trim()
+      const badgeArVal = String(m.badge_ar || m.badgeAr || '').trim()
+
       return {
         ...m,
         id: m.id || `ms_${idx + 1}`,
-        title: String(m.title || '').trim(),
+        title: titleVal,
+        title_ar: titleArVal,
+        titleAr: titleArVal,
         period: periodVal,
         year: periodVal,
         date: periodVal,
         time_frame: periodVal,
         duration: periodVal,
+        start_date: m.start_date || m.startDate || periodVal,
+        startDate: m.start_date || m.startDate || periodVal,
+        end_date: m.end_date || m.endDate || '',
+        endDate: m.end_date || m.endDate || '',
+        completion_date: m.completion_date || m.completionDate || periodVal,
+        completionDate: m.completion_date || m.completionDate || periodVal,
         company: companyVal,
+        company_ar: companyArVal,
+        companyAr: companyArVal,
         organization: companyVal,
         subtitle: companyVal,
-        description: String(m.description || '').trim(),
+        description: descVal,
+        description_ar: descArVal,
+        descriptionAr: descArVal,
         color: m.color || '#d4af37',
-        badge: m.badge || ''
+        badge: badgeVal || null,
+        badge_ar: badgeArVal || null
       }
     })
     form.value.milestones = normalizedMilestones
@@ -1049,15 +1230,22 @@ const saveAll = async () => {
       nameAr: form.value.nameAr || personalInfo.nameAr,
       name_ar: form.value.nameAr || personalInfo.nameAr,
       title: form.value.title || personalInfo.title,
+      title_ar: form.value.titleAr || '',
+      titleAr: form.value.titleAr || '',
       subtitle: form.value.subtitle || form.value.shortBio || personalInfo.shortBio,
       shortBio: form.value.shortBio || personalInfo.shortBio,
       short_bio: form.value.shortBio || personalInfo.shortBio,
       location: form.value.location || personalInfo.location,
+      location_ar: form.value.locationAr || '',
+      locationAr: form.value.locationAr || '',
       email: form.value.email || personalInfo.email,
       whatsapp: form.value.whatsapp || null,
       fullBio: form.value.fullBio || personalInfo.fullBio,
       full_bio: form.value.fullBio || personalInfo.fullBio,
+      full_bio_ar: form.value.fullBioAr || '',
+      fullBioAr: form.value.fullBioAr || '',
       bio: form.value.fullBio || personalInfo.fullBio,
+      bio_ar: form.value.fullBioAr || '',
       about: form.value.fullBio || personalInfo.fullBio,
       avatar: finalAvatarUrl || personalInfo.avatar,
       portrait: form.value.portrait || personalInfo.portrait,
@@ -1078,13 +1266,36 @@ const saveAll = async () => {
         if (data.name) form.value.name = data.name
         if (data.nameAr || data.name_ar) form.value.nameAr = data.nameAr || data.name_ar
         if (data.title) form.value.title = data.title
+        if (data.titleAr || data.title_ar) form.value.titleAr = data.titleAr || data.title_ar
         if (data.location) form.value.location = data.location
+        if (data.locationAr || data.location_ar) form.value.locationAr = data.locationAr || data.location_ar
         if (data.fullBio || data.full_bio) form.value.fullBio = data.fullBio || data.full_bio
+        if (data.fullBioAr || data.full_bio_ar || data.bio_ar) form.value.fullBioAr = data.fullBioAr || data.full_bio_ar || data.bio_ar
         if (data.avatar) form.value.avatar = data.avatar
         if (data.portrait) form.value.portrait = data.portrait
         if (Array.isArray(data.philosophy)) form.value.philosophy = data.philosophy
         if (Array.isArray(data.metrics || data.about_metrics)) form.value.metrics = data.metrics || data.about_metrics
-        if (Array.isArray(data.milestones || data.timeline)) form.value.milestones = data.milestones || data.timeline
+        if (Array.isArray(data.milestones || data.timeline)) {
+          form.value.milestones = (data.milestones || data.timeline).map((m, idx) => ({
+            ...m,
+            id: m.id || `ms_${idx + 1}`,
+            title: m.title || '',
+            title_ar: m.title_ar || m.titleAr || '',
+            titleAr: m.title_ar || m.titleAr || '',
+            period: m.period || m.year || m.date || m.time_frame || m.duration || m.start_date || m.completion_date || '',
+            year: m.year || m.period || m.date || m.time_frame || m.duration || m.start_date || m.completion_date || '',
+            date: m.date || m.period || m.year || m.start_date || m.completion_date || '',
+            start_date: m.start_date || m.startDate || m.period || m.year || '',
+            completion_date: m.completion_date || m.completionDate || m.period || m.year || '',
+            company: m.company || m.organization || m.subtitle || '',
+            company_ar: m.company_ar || m.companyAr || '',
+            description: m.description || '',
+            description_ar: m.description_ar || m.descriptionAr || '',
+            color: m.color || '#d4af37',
+            badge: m.badge || '',
+            badge_ar: m.badge_ar || m.badgeAr || ''
+          }))
+        }
       }
     }
     toastMessage.value = 'About section & Career Trajectory saved successfully.'

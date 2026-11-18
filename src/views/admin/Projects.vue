@@ -126,7 +126,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Category -->
               <div>
                 <label class="block text-xs font-mono text-slate-300 mb-2">Category *</label>
@@ -135,17 +135,6 @@
                   type="text"
                   required
                   placeholder="e.g. 3D Experience / Fintech"
-                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 focus:ring-1 focus:ring-gold-400 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all font-mono"
-                />
-              </div>
-
-              <!-- Year -->
-              <div>
-                <label class="block text-xs font-mono text-slate-300 mb-2">Year</label>
-                <input
-                  v-model="form.year"
-                  type="text"
-                  placeholder="2024"
                   class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 focus:ring-1 focus:ring-gold-400 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 outline-none transition-all font-mono"
                 />
               </div>
@@ -166,6 +155,77 @@
                     class="w-11 h-11 rounded-xl cursor-pointer bg-slate-900 border border-slate-800 p-1" 
                   />
                 </div>
+              </div>
+            </div>
+
+            <!-- Project Dates & Milestones (Start / End / Completion / Year) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">Start Date (تاريخ البدء)</label>
+                <input
+                  v-model="form.start_date"
+                  type="text"
+                  placeholder="e.g. 2023-01 or Jan 2023"
+                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">End / Completion Date (تاريخ الانتهاء)</label>
+                <input
+                  v-model="form.completion_date"
+                  type="text"
+                  placeholder="e.g. 2024-06 or Present"
+                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">Release Year (السنة)</label>
+                <input
+                  v-model="form.year"
+                  type="text"
+                  placeholder="2024"
+                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none"
+                />
+              </div>
+            </div>
+
+            <!-- Arabic Localization Fields (Bilingual AR/EN) -->
+            <div class="p-4 rounded-2xl bg-amber-500/[0.04] border border-amber-500/20 space-y-4">
+              <h4 class="text-xs font-mono font-bold text-amber-400 flex items-center gap-2">
+                <span>🌐</span>
+                <span>المحتوى العربي (Bilingual AR Support)</span>
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-mono text-slate-300 mb-1.5">عنوان المشروع بالعربية (Title AR)</label>
+                  <input
+                    v-model="form.title_ar"
+                    type="text"
+                    dir="rtl"
+                    placeholder="مثال: منصة وصلة 3D"
+                    class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-mono text-slate-300 mb-1.5">العنوان الفرعي بالعربية (Subtitle AR)</label>
+                  <input
+                    v-model="form.subtitle_ar"
+                    type="text"
+                    dir="rtl"
+                    placeholder="مثال: منصة خدمات تفاعلية بتجربة مستخدم متقدمة"
+                    class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">الوصف التفصيلي بالعربية (Description AR)</label>
+                <textarea
+                  v-model="form.description_ar"
+                  rows="3"
+                  dir="rtl"
+                  placeholder="وصف التحديات المعمارية وتنفيذ WebGL بالعربية..."
+                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-gold-400 rounded-xl p-3 text-xs text-white placeholder-slate-500 outline-none"
+                ></textarea>
               </div>
             </div>
 
@@ -665,12 +725,18 @@ const imagePreview = ref('')
 const techStackInput = ref('')
 const form = ref({
   title: '',
+  title_ar: '',
   subtitle: '',
+  subtitle_ar: '',
   category: '',
+  category_ar: '',
   year: '2024',
+  start_date: '',
+  completion_date: '',
   status: 'active',
   accentColor: '#d4af37',
   description: '',
+  description_ar: '',
   image: '',
   liveUrl: '',
   githubUrl: '',
@@ -746,12 +812,18 @@ const openCreateModal = () => {
   techStackInput.value = 'Vue 3, Three.js, Tailwind CSS'
   form.value = {
     title: '',
+    title_ar: '',
     subtitle: '',
+    subtitle_ar: '',
     category: 'Web Application / 3D Experience',
+    category_ar: '',
     year: new Date().getFullYear().toString(),
+    start_date: '',
+    completion_date: '',
     status: 'active',
     accentColor: '#d4af37',
     description: '',
+    description_ar: '',
     image: '',
     liveUrl: '',
     githubUrl: '',
@@ -770,6 +842,13 @@ const openEditModal = (project) => {
   techStackInput.value = (project.tech || []).join(', ')
   form.value = {
     ...project,
+    title_ar: project.title_ar || project.titleAr || '',
+    subtitle_ar: project.subtitle_ar || project.subtitleAr || '',
+    category_ar: project.category_ar || project.categoryAr || '',
+    description_ar: project.description_ar || project.descriptionAr || '',
+    start_date: project.start_date || project.startDate || '',
+    completion_date: project.completion_date || project.completionDate || project.year || '',
+    year: project.year || project.completion_date || '',
     status: project.status || (project.isActive !== false ? 'active' : 'completed'),
     image: project.image || project.preview_image || project.previewImage || '',
     isActive: project.isActive !== false && project.is_active !== false
@@ -810,12 +889,18 @@ const saveProject = async () => {
         ...savedProject,
         id: savedProject.id || form.value.id,
         title: savedProject.title || form.value.title,
+        title_ar: savedProject.title_ar || savedProject.titleAr || form.value.title_ar,
         subtitle: savedProject.subtitle || form.value.subtitle,
+        subtitle_ar: savedProject.subtitle_ar || savedProject.subtitleAr || form.value.subtitle_ar,
         category: savedProject.category || form.value.category,
+        category_ar: savedProject.category_ar || savedProject.categoryAr || form.value.category_ar,
         year: savedProject.year ? savedProject.year.toString() : form.value.year,
+        start_date: savedProject.start_date || savedProject.startDate || form.value.start_date,
+        completion_date: savedProject.completion_date || savedProject.completionDate || form.value.completion_date,
         status: savedProject.status || form.value.status || 'active',
         accentColor: savedProject.accent_color || savedProject.accentColor || form.value.accentColor,
         description: savedProject.description || form.value.description,
+        description_ar: savedProject.description_ar || savedProject.descriptionAr || form.value.description_ar,
         image: savedProject.image || savedProject.thumbnail || savedProject.thumbnail_url || form.value.image,
         liveUrl: savedProject.live_url || savedProject.liveUrl || form.value.liveUrl,
         githubUrl: savedProject.github_url || savedProject.githubUrl || form.value.githubUrl,

@@ -49,20 +49,20 @@
 
         <a 
           v-for="item in navLinks" 
-          :key="item.name"
-          :ref="(el) => setLinkRef(el, item.name)"
+          :key="item.key"
+          :ref="(el) => setLinkRef(el, item.key)"
           :href="item.href"
           @click.prevent="scrollTo(item)"
           class="relative z-10 px-4 py-1.5 text-xs font-semibold tracking-wide transition-colors duration-300 rounded-full cursor-pointer select-none"
           :class="[
-            activeNav === item.name 
+            activeNav === item.key 
               ? 'text-amber-300' 
               : 'text-slate-300 hover:text-white'
           ]"
         >
           <span>{{ item.name }}</span>
           <span 
-            v-if="activeNav === item.name" 
+            v-if="activeNav === item.key" 
             class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"
           ></span>
         </a>
@@ -101,17 +101,29 @@
           <span v-else>🔇</span>
         </button>
 
+        <!-- Bilingual Language Switcher Pill (🌐 AR / EN) -->
+        <button
+          type="button"
+          @click="toggleLang"
+          :title="lang === 'en' ? 'التبديل إلى اللغة العربية' : 'Switch to English'"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.08] hover:border-amber-400/50 bg-white/[0.03] hover:bg-amber-500/10 text-slate-200 hover:text-amber-300 transition-all text-xs font-mono font-semibold cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.1)] active:scale-95"
+        >
+          <span class="text-xs">🌐</span>
+          <span class="font-bold tracking-wider text-amber-300">{{ t.langCode }}</span>
+          <span class="hidden xl:inline text-[10px] text-slate-400 font-normal">({{ t.langLabel }})</span>
+        </button>
+
         <!-- Magnetic "Let's Connect" CTA Button -->
         <a 
           ref="ctaBtnRef"
           href="#contact" 
-          @click.prevent="scrollTo({ name: 'Contact', href: '#contact' })"
+          @click.prevent="scrollTo({ key: 'Contact', name: t.navContact, href: '#contact' })"
           @mousemove="handleMagneticMove"
           @mouseleave="resetMagneticMove"
           :style="magneticStyle"
           class="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold tracking-wider text-white bg-gradient-to-r from-[#ff5500] via-amber-500 to-[#f59e0b] border border-amber-300/40 shadow-[0_0_24px_rgba(255,85,0,0.45)] hover:shadow-[0_0_32px_rgba(255,85,0,0.75)] transition-shadow cursor-pointer group"
         >
-          <span>Let's Connect</span>
+          <span>{{ t.navConnect }}</span>
           <svg class="w-3.5 h-3.5 text-white transform rotate-45 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
@@ -141,25 +153,39 @@
       <div class="flex flex-col gap-1.5">
         <a 
           v-for="item in navLinks" 
-          :key="item.name"
+          :key="item.key"
           :href="item.href"
           @click.prevent="scrollTo(item)"
           class="px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between"
           :class="[
-            activeNav === item.name 
+            activeNav === item.key 
               ? 'text-amber-300 bg-gradient-to-r from-[#ff5500]/20 to-amber-500/10 border-l-4 border-[#ff5500]' 
               : 'text-slate-300 hover:bg-white/5 hover:text-white'
           ]"
         >
           <span>{{ item.name }}</span>
-          <span v-if="activeNav === item.name" class="w-2 h-2 rounded-full bg-[#ff5500] shadow-[0_0_8px_#ff5500]"></span>
+          <span v-if="activeNav === item.key" class="w-2 h-2 rounded-full bg-[#ff5500] shadow-[0_0_8px_#ff5500]"></span>
         </a>
+
+        <!-- Mobile Language Switcher Action -->
+        <div class="pt-3 pb-1 border-t border-white/10 mt-1 flex items-center justify-between px-2">
+          <span class="text-xs font-mono text-slate-400">Language / اللغة</span>
+          <button 
+            type="button" 
+            @click="toggleLang" 
+            class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 text-amber-300 text-xs font-bold font-mono shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+          >
+            <span>🌐</span>
+            <span>{{ t.switchLanguage }}</span>
+          </button>
+        </div>
+
         <a 
           href="#contact" 
-          @click.prevent="scrollTo({ name: 'Contact', href: '#contact' })"
+          @click.prevent="scrollTo({ key: 'Contact', name: t.navContact, href: '#contact' })"
           class="mt-2 text-center py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#ff5500] to-amber-500 shadow-[0_0_20px_rgba(255,85,0,0.4)]"
         >
-          Let's Connect 🚀
+          {{ t.navConnect }} 🚀
         </a>
       </div>
     </div>
@@ -169,6 +195,7 @@
 <script setup>
 import { ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { profileState, resolveProfileAvatar } from '@/services/profileState'
+import { lang, isRtl, toggleLang, t } from '@/services/siteLanguage'
 
 const props = defineProps({
   avatarUrl: {
@@ -198,15 +225,15 @@ const isScrolled = ref(false)
 const isMobileMenuOpen = ref(false)
 const activeNav = ref('Home')
 
-const navLinks = [
-  { name: 'Home', href: '#hero' },
-  { name: 'About', href: '#about' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Certificates', href: '#certificates' },
-  { name: 'Blog', href: '#blog' },
-  { name: 'Contact', href: '#contact' },
-]
+const navLinks = computed(() => [
+  { key: 'Home', name: t.value.navHome, href: '#hero' },
+  { key: 'About', name: t.value.navAbout, href: '#about' },
+  { key: 'Skills', name: t.value.navSkills, href: '#skills' },
+  { key: 'Projects', name: t.value.navProjects, href: '#projects' },
+  { key: 'Certificates', name: t.value.navCertificates, href: '#certificates' },
+  { key: 'Blog', name: t.value.navBlog, href: '#blog' },
+  { key: 'Contact', name: t.value.navContact, href: '#contact' },
+])
 
 // Sliding Pill Indicator
 const navContainerRef = ref(null)
@@ -228,7 +255,7 @@ const updateSlidingPill = () => {
   }
 }
 
-watch(activeNav, () => {
+watch([activeNav, lang], () => {
   nextTick(updateSlidingPill)
 })
 
@@ -256,7 +283,7 @@ const resetMagneticMove = () => {
 
 // Smooth Scroll Navigation with Offset
 const scrollTo = (item) => {
-  activeNav.value = item.name
+  activeNav.value = item.key || item.name
   isMobileMenuOpen.value = false
   const targetId = item.href.replace('#', '')
   const el = document.getElementById(targetId)

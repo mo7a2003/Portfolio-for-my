@@ -225,10 +225,10 @@
             <!-- Header Block: Monumental Title & Gradient Subtitle -->
             <div class="space-y-2">
               <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                {{ currentProject.title }}
+                {{ getLocalized(currentProject, 'title', currentProject.title) }}
               </h2>
               <p class="text-xs sm:text-sm font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-amber-400 to-[#00f2fe]">
-                {{ currentProject.subtitle || currentProject.tagline || 'AI-Powered Smart Architecture & High-Performance Web Platform' }}
+                {{ getLocalized(currentProject, 'subtitle', getLocalized(currentProject, 'tagline', currentProject.subtitle || currentProject.tagline || 'AI-Powered Smart Architecture & High-Performance Web Platform')) }}
               </p>
             </div>
 
@@ -245,7 +245,7 @@
                   <span class="text-[10px] font-mono text-slate-500">// CASE_STUDY_SPEC</span>
                 </div>
                 <p class="text-sm sm:text-[15px] leading-relaxed text-slate-300 font-sans">
-                  {{ currentProject.description || currentProject.tagline || 'Engineered with a modular reactive architecture, combining GPU-accelerated visual polish with clean backend API integration.' }}
+                  {{ getLocalized(currentProject, 'description', getLocalized(currentProject, 'tagline', currentProject.description || currentProject.tagline || 'Engineered with a modular reactive architecture, combining GPU-accelerated visual polish with clean backend API integration.')) }}
                 </p>
               </div>
             </div>
@@ -354,6 +354,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { X, ExternalLink, Github, Layers } from 'lucide-vue-next'
 import { resolveAssetUrl } from '../services/portfolioService'
 import { projects as defaultProjects } from '../data/portfolioData'
+import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
 
 const props = defineProps({
   project: {

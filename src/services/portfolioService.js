@@ -103,11 +103,17 @@ export function normalizeSkill(s) {
     ...s,
     id: s.id || s._id || `skill_${s.name}`,
     name: s.name || '',
+    name_ar: s.name_ar || s.nameAr || '',
+    nameAr: s.name_ar || s.nameAr || '',
     category: s.category || 'General',
+    category_ar: s.category_ar || s.categoryAr || '',
+    categoryAr: s.category_ar || s.categoryAr || '',
     level: s.level || s.proficiency || 'Expert',
     proficiency: s.level || s.proficiency || 'Expert',
     color: s.color || '#ff5500',
     description: s.description || '',
+    description_ar: s.description_ar || s.descriptionAr || '',
+    descriptionAr: s.description_ar || s.descriptionAr || '',
     icon: resolvedIcon || rawIcon,
     image: resolvedIcon || rawIcon,
     rawIcon: rawIcon
@@ -160,15 +166,34 @@ export function normalizeProject(p) {
 
   const id = p.id || p.slug || p._id || `proj_${Date.now()}`
 
+  const startDate = p.start_date || p.startDate || ''
+  const endDate = p.end_date || p.endDate || ''
+  const completionDate = p.completion_date || p.completionDate || (p.year ? p.year.toString() : '')
+
   return {
     ...p,
     id: id,
     title: p.title || p.name || 'Untitled Showcase',
+    title_ar: p.title_ar || p.titleAr || '',
+    titleAr: p.title_ar || p.titleAr || '',
     subtitle: p.subtitle || p.pitch || p.tagline || '',
+    subtitle_ar: p.subtitle_ar || p.subtitleAr || '',
+    subtitleAr: p.subtitle_ar || p.subtitleAr || '',
     tagline: p.tagline || p.subtitle || p.pitch || '',
+    tagline_ar: p.tagline_ar || p.taglineAr || p.subtitle_ar || '',
     description: p.description || p.full_description || p.summary || '',
+    description_ar: p.description_ar || p.descriptionAr || '',
+    descriptionAr: p.description_ar || p.descriptionAr || '',
     category: p.category || 'Web Application',
-    year: p.year ? p.year.toString() : new Date().getFullYear().toString(),
+    category_ar: p.category_ar || p.categoryAr || '',
+    categoryAr: p.category_ar || p.categoryAr || '',
+    year: p.year ? p.year.toString() : (completionDate || new Date().getFullYear().toString()),
+    start_date: startDate,
+    startDate: startDate,
+    end_date: endDate,
+    endDate: endDate,
+    completion_date: completionDate,
+    completionDate: completionDate,
     status: p.status || (p.is_active !== false && p.isActive !== false ? 'active' : 'completed'),
     isActive: p.isActive !== false && p.is_active !== false && p.status !== 'draft',
     is_active: p.isActive !== false && p.is_active !== false && p.status !== 'draft',
@@ -189,6 +214,37 @@ export function normalizeProject(p) {
     tech: tech,
     metrics: metrics,
     features: features
+  }
+}
+
+export function normalizeCertificate(c) {
+  if (!c || typeof c !== 'object') return null
+  const issueDate = String(c.issue_date || c.issueDate || c.date || c.year || '2026').trim()
+  const completionDate = String(c.completion_date || c.completionDate || issueDate).trim()
+
+  return {
+    ...c,
+    id: c.id || `cert_${Date.now()}`,
+    title: c.title || '',
+    title_ar: c.title_ar || c.titleAr || '',
+    titleAr: c.title_ar || c.titleAr || '',
+    issuer: c.issuer || '',
+    issuer_ar: c.issuer_ar || c.issuerAr || '',
+    issuerAr: c.issuer_ar || c.issuerAr || '',
+    year: c.year ? c.year.toString() : issueDate,
+    date: issueDate,
+    issue_date: issueDate,
+    issueDate: issueDate,
+    completion_date: completionDate,
+    completionDate: completionDate,
+    description: c.description || '',
+    description_ar: c.description_ar || c.descriptionAr || '',
+    descriptionAr: c.description_ar || c.descriptionAr || '',
+    badge: c.badge || 'VERIFIED CREDENTIAL',
+    badge_ar: c.badge_ar || c.badgeAr || '',
+    hash: c.hash || `ID // VERIFIED-${issueDate}`,
+    accent: c.accent || '#f59e0b',
+    image: resolveAssetUrl(c.image || c.image_url || '')
   }
 }
 
@@ -398,7 +454,9 @@ export const portfolioService = {
         profile: { ...syncedProfile },
         projects: normalizedProjects,
         skills: normalizedSkills,
-        certificates: rawCertificates.length ? rawCertificates : defaultCertificates,
+        certificates: rawCertificates.length 
+          ? rawCertificates.map(normalizeCertificate).filter(Boolean) 
+          : defaultCertificates.map(normalizeCertificate).filter(Boolean),
         socialLinks: rawSocial.length ? rawSocial : defaultSocialLinks,
         stats: Array.isArray(unwrappedPortfolio.stats)
           ? unwrappedPortfolio.stats

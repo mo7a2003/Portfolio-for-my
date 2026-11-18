@@ -270,10 +270,49 @@
             </div>
           </div>
 
+          <!-- Arabic Localization (AR) -->
+          <div class="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-3">
+            <div class="flex items-center gap-2 text-xs font-mono text-amber-400 font-bold">
+              <span>🌐 Arabic Localization (الترجمة العربية)</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">عنوان الشهادة / الجائزة بالعربية</label>
+                <input
+                  v-model="form.title_ar"
+                  type="text"
+                  dir="rtl"
+                  placeholder="مثال: جائزة عنان — أفضل مشروع تخرج"
+                  class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">الجهة المانحة بالعربية</label>
+                <input
+                  v-model="form.issuer_ar"
+                  type="text"
+                  dir="rtl"
+                  placeholder="مثال: الكلية الجامعية للعلوم التطبيقية"
+                  class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-slate-300 mb-1.5">الوصف والتفاصيل بالعربية</label>
+              <textarea
+                v-model="form.description_ar"
+                rows="2"
+                dir="rtl"
+                placeholder="تفاصيل التكريم أو التخصص باللغة العربية..."
+                class="w-full bg-slate-900 border border-slate-800 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none resize-none"
+              ></textarea>
+            </div>
+          </div>
+
           <!-- Year, Badge Text & Associated Project -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-mono text-slate-300 mb-1.5">Year / Date *</label>
+              <label class="block text-xs font-mono text-slate-300 mb-1.5">Year / Issue Date *</label>
               <input
                 v-model="form.year"
                 type="text"
@@ -475,13 +514,17 @@ const accentPresets = [
 
 const form = ref({
   title: '',
+  title_ar: '',
   issuer: '',
+  issuer_ar: '',
   year: '2026',
   badge: 'VERIFIED CREDENTIAL',
+  badge_ar: '',
   project: '',
   accent: '#f59e0b',
   hash: 'ID // VERIFIED-2026',
   description: '',
+  description_ar: '',
   tagsInput: '',
   url: '',
   image: '',
@@ -522,13 +565,17 @@ const openCreateModal = () => {
   const nextIndex = String(certificates.value.length + 1).padStart(2, '0')
   form.value = {
     title: '',
+    title_ar: '',
     issuer: '',
+    issuer_ar: '',
     year: '2026',
     badge: 'VERIFIED CREDENTIAL',
+    badge_ar: '',
     project: '',
     accent: '#f59e0b',
     hash: `ID // VERIFIED-2026-${nextIndex}`,
     description: '',
+    description_ar: '',
     tagsInput: '',
     url: '',
     image: '',
@@ -543,13 +590,17 @@ const openEditModal = (cert) => {
   modalError.value = ''
   form.value = {
     title: cert.title || '',
+    title_ar: cert.title_ar || cert.titleAr || '',
     issuer: cert.issuer || '',
-    year: cert.year || '2026',
+    issuer_ar: cert.issuer_ar || cert.issuerAr || '',
+    year: cert.year || cert.date || cert.issue_date || '2026',
     badge: cert.badge || 'VERIFIED CREDENTIAL',
+    badge_ar: cert.badge_ar || cert.badgeAr || '',
     project: cert.project || '',
     accent: cert.accent || '#f59e0b',
     hash: cert.hash || 'ID // VERIFIED-2026',
     description: cert.description || '',
+    description_ar: cert.description_ar || cert.descriptionAr || '',
     tagsInput: Array.isArray(cert.tags) ? cert.tags.join(', ') : (cert.tags || ''),
     url: cert.url || '',
     image: cert.image || '',

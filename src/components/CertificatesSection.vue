@@ -11,17 +11,17 @@
         <div>
           <div class="section-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] text-amber-400 font-mono text-xs tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
             <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <span>// VERIFIED ACADEMIC &amp; TECHNICAL CREDENTIALS</span>
+            <span>{{ t.certSubtitle }}</span>
           </div>
           <h2 class="section-title text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-            Certifications &amp; <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-[#00f2fe]">Honors Vault</span>
+            {{ t.certTitle }} <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-[#00f2fe]">{{ t.certTitleHighlight }}</span>
           </h2>
         </div>
 
         <div class="flex items-center gap-3 font-mono text-xs">
           <div class="px-3.5 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span class="font-bold">● CRYPTOGRAPHICALLY VERIFIED</span>
+            <span class="font-bold">{{ t.certVerified }}</span>
           </div>
         </div>
       </div>
@@ -54,12 +54,12 @@
                   : 'bg-[#00f2fe]/12 border-[#00f2fe]/35 text-[#00f2fe]'"
               >
                 <span>{{ idx === 0 ? '🏆' : '✦' }}</span>
-                <span>{{ cert.badge || 'VERIFIED CREDENTIAL' }}</span>
+                <span>{{ getLocalized(cert, 'badge', cert.badge || 'VERIFIED CREDENTIAL') }}</span>
               </span>
 
               <!-- X-Ray Verification Hash -->
               <span class="px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.07] font-mono text-[10px] text-slate-400 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-colors">
-                {{ cert.hash || `ID // VERIFIED-${cert.year || '2026'}-0${idx + 1}` }}
+                {{ cert.hash || `ID // VERIFIED-${cert.issue_date || cert.issueDate || cert.year || '2026'}-0${idx + 1}` }}
               </span>
             </div>
 
@@ -89,12 +89,12 @@
 
               <div class="min-w-0 flex-1">
                 <h3 class="text-lg sm:text-xl font-black text-white group-hover:text-amber-300 transition-colors leading-snug">
-                  {{ cert.title }}
+                  {{ getLocalized(cert, 'title', cert.title) }}
                 </h3>
                 <div class="mt-1 flex flex-wrap items-center gap-2 text-xs font-mono text-slate-400">
-                  <span class="text-amber-400/90 font-semibold">{{ cert.issuer }}</span>
+                  <span class="text-amber-400/90 font-semibold">{{ getLocalized(cert, 'issuer', cert.issuer) }}</span>
                   <span>•</span>
-                  <span class="text-[#00f2fe]">// {{ cert.year || '2026' }}</span>
+                  <span class="text-[#00f2fe]">// {{ cert.issue_date || cert.issueDate || cert.year || '2026' }}</span>
                 </div>
               </div>
             </div>
@@ -110,7 +110,7 @@
             </div>
 
             <p class="text-xs sm:text-sm text-slate-300/85 leading-relaxed mb-5">
-              {{ cert.description }}
+              {{ getLocalized(cert, 'description', cert.description) }}
             </p>
           </div>
 
@@ -188,22 +188,22 @@
             </div>
 
             <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
-              {{ selectedCertificate.title }}
+              {{ getLocalized(selectedCertificate, 'title', selectedCertificate.title) }}
             </h3>
 
             <p class="text-xs font-mono text-amber-400 mb-4">
-              Issued to <strong class="text-white">MOHAMMED ALHWAITI</strong> by {{ selectedCertificate.issuer }} ({{ selectedCertificate.year }})
+              Issued to <strong class="text-white">{{ isRtl ? 'محمد الحويطي' : 'MOHAMMED ALHWAITI' }}</strong> by {{ getLocalized(selectedCertificate, 'issuer', selectedCertificate.issuer) }} ({{ selectedCertificate.issue_date || selectedCertificate.issueDate || selectedCertificate.year }})
             </p>
 
             <p class="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed mb-6">
-              {{ selectedCertificate.description }}
+              {{ getLocalized(selectedCertificate, 'description', selectedCertificate.description) }}
             </p>
 
             <!-- Digital Seal & Signature Row -->
             <div class="pt-5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-4 text-left font-mono text-[10px]">
               <div>
                 <span class="text-slate-500 block">ISSUING AUTHORITY</span>
-                <span class="text-slate-200 font-bold">{{ selectedCertificate.issuer }}</span>
+                <span class="text-slate-200 font-bold">{{ getLocalized(selectedCertificate, 'issuer', selectedCertificate.issuer) }}</span>
               </div>
               <div v-if="selectedCertificate.project">
                 <span class="text-slate-500 block">ASSOCIATED WORK</span>
@@ -254,6 +254,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
 
 const props = defineProps({
   certificates: {

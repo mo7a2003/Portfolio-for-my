@@ -17,13 +17,13 @@
                 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
               </span>
               <span class="text-xs font-mono font-bold text-white tracking-wider flex items-center gap-1.5">
-                <span class="text-emerald-400">GAZA, PS</span>
+                <span class="text-emerald-400">{{ t.gazaLocation }}</span>
                 <span class="text-amber-300 font-mono text-[11px] bg-[#ff5500]/15 px-2 py-0.5 rounded-md border border-[#ff5500]/30">{{ gazaTime }}</span>
               </span>
             </div>
             <span class="hidden sm:inline text-slate-600 text-xs font-mono">/</span>
             <span class="text-[11px] font-mono tracking-wider text-slate-300">
-              AVAILABLE FOR ELITE 3D &amp; FRONTEND ARCHITECTURE
+              {{ t.availableFor }}
             </span>
           </div>
 
@@ -71,8 +71,8 @@
               :style="primaryMagneticStyle"
               class="px-7 py-3.5 rounded-2xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-[#ff5500] via-amber-500 to-[#f59e0b] border border-amber-300/40 shadow-[0_0_30px_rgba(255,85,0,0.5)] hover:shadow-[0_0_45px_rgba(255,85,0,0.8)] flex items-center gap-2.5 group cursor-pointer transition-shadow"
             >
-              <span>Explore Selected Works</span>
-              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span>{{ t.exploreWorks }}</span>
+              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" :class="isRtl ? 'rotate-180 group-hover:-translate-x-1' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </a>
@@ -91,13 +91,13 @@
               <svg v-else class="w-4 h-4 text-[#00f2fe]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              <span>{{ isDownloadingCv ? 'Preparing CV...' : (downloadSuccess ? 'Downloaded ✓' : 'Download CV') }}</span>
+              <span>{{ isDownloadingCv ? t.preparingCv : (downloadSuccess ? t.downloadedCv : t.downloadCv) }}</span>
             </button>
           </div>
 
           <!-- Cyber Neon Social Connectivity Bar -->
           <div class="hero-social flex items-center gap-3">
-            <span class="text-[11px] font-mono text-slate-400 tracking-wider uppercase hidden sm:inline-block">CHANNELS:</span>
+            <span class="text-[11px] font-mono text-slate-400 tracking-wider uppercase hidden sm:inline-block">{{ t.channels }}</span>
             <div class="flex items-center gap-2 p-1.5 rounded-2xl backdrop-blur-xl bg-white/[0.03] border border-white/[0.08]">
               <!-- WhatsApp -->
               <a 
@@ -205,7 +205,7 @@
                   {{ animatedStats[idx] !== undefined ? animatedStats[idx] : stat.value }}{{ (stat.highlight || stat.value || '').replace(/[0-9]/g, '') }}
                 </div>
                 <div class="text-xs font-mono text-slate-400 uppercase tracking-wider mt-0.5">
-                  {{ stat.label }}
+                  {{ resolveStatLabel(stat.label) }}
                 </div>
               </div>
             </div>
@@ -234,7 +234,7 @@
             href="#about"
             class="inline-flex items-center gap-3 text-[11px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-amber-300 transition-colors group cursor-pointer"
           >
-            <span>SCROLL TO EXPLORE</span>
+            <span>{{ t.scrollToExplore }}</span>
             <span class="w-5 h-8 rounded-full border border-white/20 group-hover:border-[#ff5500] flex items-start justify-center p-1 transition-colors">
               <span class="w-1 h-2 rounded-full bg-[#ff5500] animate-bounce"></span>
             </span>
@@ -251,6 +251,7 @@
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { personalInfo } from '@/data/portfolioData'
 import { portfolioService } from '@/services/portfolioService'
+import { lang, isRtl, t } from '@/services/siteLanguage'
 import HeroCanvas3D from './HeroCanvas3D.vue'
 
 const props = defineProps({
@@ -382,14 +383,28 @@ watch(currentStats, () => {
   startCounterAnimation()
 })
 
+const resolveStatLabel = (label) => {
+  if (lang.value !== 'ar') return label
+  const l = (label || '').toLowerCase()
+  if (l.includes('experience')) return t.value.statExperience
+  if (l.includes('project')) return t.value.statProjects
+  if (l.includes('award')) return t.value.statAwards
+  if (l.includes('client')) return t.value.statClients
+  return label
+}
+
 // ==========================================
 // 2. Cyber Kinetic Text Scramble Engine
 // ==========================================
 const fullNameParts = computed(() => {
-  const raw = (currentProfile.value.name || 'MOHAMMED ALHWAITI').trim().split(' ')
+  const isArabic = lang.value === 'ar'
+  const rawName = isArabic 
+    ? (currentProfile.value.nameAr || currentProfile.value.name_ar || 'محمد الحويطي')
+    : (currentProfile.value.name || 'MOHAMMED ALHWAITI')
+  const raw = rawName.trim().split(' ')
   return {
-    first: raw[0] || 'MOHAMMED',
-    last: raw.slice(1).join(' ') || 'ALHWAITI'
+    first: raw[0] || (isArabic ? 'محمد' : 'MOHAMMED'),
+    last: raw.slice(1).join(' ') || (isArabic ? 'الحويطي' : 'ALHWAITI')
   }
 })
 
@@ -401,12 +416,18 @@ watch(fullNameParts, (val) => {
   displayedLastName.value = val.last
 })
 
-const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+<>'
+watch(lang, () => {
+  triggerScramble()
+})
+
+const GLYPHS_EN = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+<>'
+const GLYPHS_AR = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي٠١٢٣٤٥٦٧٨٩'
 let scrambleFrame = null
 
 const scrambleWord = (targetText, outputRef, duration = 650) => {
   const startTime = performance.now()
   const length = targetText.length
+  const glyphs = lang.value === 'ar' ? GLYPHS_AR : GLYPHS_EN
 
   const update = (now) => {
     const elapsed = now - startTime
@@ -420,7 +441,7 @@ const scrambleWord = (targetText, outputRef, duration = 650) => {
       } else if (i < revealIndex) {
         out += targetText[i]
       } else {
-        out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
+        out += glyphs[Math.floor(Math.random() * glyphs.length)]
       }
     }
 

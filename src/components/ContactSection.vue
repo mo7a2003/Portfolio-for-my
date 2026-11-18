@@ -165,7 +165,7 @@
                     for="contact-name"
                     class="absolute left-4 top-2 text-[10px] font-mono uppercase tracking-wider text-amber-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-xs peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-[#ff5500] pointer-events-none"
                   >
-                    Your Name *
+                    {{ t.nameLabel }}
                   </label>
                 </div>
 
@@ -182,7 +182,7 @@
                     for="contact-email"
                     class="absolute left-4 top-2 text-[10px] font-mono uppercase tracking-wider text-[#00f2fe] transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-xs peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-[#00f2fe] pointer-events-none"
                   >
-                    Email Address *
+                    {{ t.emailLabel }}
                   </label>
                 </div>
               </div>
@@ -201,7 +201,7 @@
                   for="contact-subject"
                   class="absolute left-4 top-2 text-[10px] font-mono uppercase tracking-wider text-amber-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-xs peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-[#ff5500] pointer-events-none"
                 >
-                  Subject / Project Scope *
+                  {{ t.subjectLabel }}
                 </label>
               </div>
 
@@ -219,7 +219,7 @@
                   for="contact-message"
                   class="absolute left-4 top-2 text-[10px] font-mono uppercase tracking-wider text-amber-400 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-xs peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-[#ff5500] pointer-events-none"
                 >
-                  Your Message &amp; Requirements *
+                  {{ t.messageLabel }}
                 </label>
               </div>
 
@@ -232,7 +232,7 @@
               <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <span v-if="submitSuccess" class="text-xs font-mono text-emerald-400 flex items-center gap-2">
                   <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span>Transmission sent! Mohammed will reply shortly.</span>
+                  <span>{{ t.messageSent }}</span>
                 </span>
                 <span v-else class="text-[11px] font-mono text-slate-400 flex items-center gap-2">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
@@ -249,9 +249,9 @@
                   class="px-8 py-4 rounded-2xl font-bold text-xs tracking-wider uppercase text-white bg-gradient-to-r from-[#ff5500] via-amber-500 to-[#f59e0b] border border-amber-300/40 shadow-[0_0_30px_rgba(255,85,0,0.45)] hover:shadow-[0_0_45px_rgba(255,85,0,0.8)] flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 transition-shadow"
                 >
                   <span v-if="isSubmitting" class="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
-                  <span v-if="isSubmitting">Transmitting...</span>
+                  <span v-if="isSubmitting">{{ t.sendingMessage }}</span>
                   <span v-else-if="submitSuccess">Transmission Sent ✓</span>
-                  <span v-else>Send Transmission</span>
+                  <span v-else>{{ t.sendMessage }}</span>
                   <svg v-if="!isSubmitting && !submitSuccess" class="w-4 h-4 transform -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
@@ -328,6 +328,7 @@ import { reactive, ref, computed } from 'vue'
 import confetti from 'canvas-confetti'
 import { portfolioService } from '@/services/portfolioService'
 import { personalInfo } from '@/data/portfolioData'
+import { lang, isRtl, t } from '@/services/siteLanguage'
 
 const props = defineProps({
   profile: {

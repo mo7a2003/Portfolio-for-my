@@ -7,14 +7,14 @@
         <div>
           <div class="section-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] text-amber-400 font-mono text-xs tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(255,85,0,0.15)]">
             <span class="w-2 h-2 rounded-full bg-[#ff5500] animate-pulse"></span>
-            <span>// THE ARCHITECT BEHIND THE CODE</span>
+            <span>{{ t.aboutSubtitle }}</span>
           </div>
           <h2 class="section-title text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-            About <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-amber-200">Mohammed</span>
+            {{ t.aboutTitle }} <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-amber-200">{{ isRtl ? (currentProfile.nameAr || currentProfile.name_ar || 'محمد') : 'Mohammed' }}</span>
           </h2>
         </div>
         <p class="mt-4 md:mt-0 text-slate-400 max-w-md text-sm sm:text-base leading-relaxed">
-          Fusing mathematical logic, WebGL 3D immersion, and pixel-perfect design systems to build unforgettable web experiences.
+          {{ isRtl ? 'دمج التفكير الهندسي البرمجي مع أحدث تقنيات الويب ثلاثية الأبعاد لبناء حلول رقمية استثنائية.' : 'Fusing mathematical logic, WebGL 3D immersion, and pixel-perfect design systems to build unforgettable web experiences.' }}
         </p>
       </div>
 
@@ -54,24 +54,24 @@
                 <div>
                   <div class="flex items-center gap-2">
                     <h3 class="text-lg font-extrabold text-white tracking-wide">
-                      {{ currentProfile.name }}
+                      {{ isRtl && (currentProfile.nameAr || currentProfile.name_ar) ? (currentProfile.nameAr || currentProfile.name_ar) : currentProfile.name }}
                     </h3>
                     <span class="px-2 py-0.5 rounded-full text-[9px] font-mono uppercase bg-[#ff5500]/15 text-amber-300 border border-[#ff5500]/30">
-                      VERIFIED
+                      {{ isRtl ? 'معتمد' : 'VERIFIED' }}
                     </span>
                   </div>
                   <p class="text-xs font-mono text-amber-400 mt-0.5">
-                    {{ currentProfile.title }}
+                    {{ isRtl && (currentProfile.title_ar || currentProfile.titleAr) ? (currentProfile.title_ar || currentProfile.titleAr) : currentProfile.title }}
                   </p>
                   <p class="text-[11px] text-slate-400 font-mono mt-0.5">
-                    📍 {{ currentProfile.location }}
+                    📍 {{ isRtl && (currentProfile.location_ar || currentProfile.locationAr) ? (currentProfile.location_ar || currentProfile.locationAr) : currentProfile.location }}
                   </p>
                 </div>
               </div>
 
               <!-- Biography Copy -->
               <p class="text-sm text-slate-300/90 leading-relaxed mb-6">
-                {{ currentProfile.fullBio || currentProfile.full_bio }}
+                {{ isRtl && (currentProfile.full_bio_ar || currentProfile.fullBioAr || currentProfile.bio_ar) ? (currentProfile.full_bio_ar || currentProfile.fullBioAr || currentProfile.bio_ar) : (currentProfile.fullBio || currentProfile.full_bio) }}
               </p>
 
               <!-- Core Architectural Pillars -->
@@ -166,7 +166,7 @@
                 <div class="flex items-center gap-3">
                   <span class="w-2.5 h-2.5 rounded-full bg-[#ff5500] shadow-[0_0_10px_#ff5500]"></span>
                   <h3 class="text-sm sm:text-base font-extrabold text-white tracking-wider uppercase font-mono">
-                    Career Trajectory &amp; Milestones
+                    {{ t.careerTrajectory }}
                   </h3>
                 </div>
                 <span class="px-3 py-1 rounded-full text-xs font-mono bg-[#ff5500]/15 text-amber-300 border border-[#ff5500]/30">
@@ -192,7 +192,7 @@
 
                   <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                     <h4 class="text-base font-bold text-white group-hover/ms:text-amber-300 transition-colors">
-                      {{ m.title }}
+                      {{ isRtl && (m.title_ar || m.titleAr) ? (m.title_ar || m.titleAr) : m.title }}
                     </h4>
                     <span 
                       class="px-2.5 py-0.5 rounded-full text-[10px] font-mono border"
@@ -202,20 +202,20 @@
                         color: m.color || '#f59e0b'
                       }"
                     >
-                      {{ m.period || m.year || m.date || m.time_frame }}
+                      {{ m.period || m.year || m.date || m.time_frame || m.start_date }}
                     </span>
                   </div>
 
                   <p 
-                    v-if="m.company || m.organization || m.subtitle" 
+                    v-if="m.company || m.organization || m.subtitle || m.company_ar" 
                     class="text-xs font-mono mb-2"
                     :style="{ color: m.color === '#d4af37' ? '#00f2fe' : (m.color || '#f59e0b') }"
                   >
-                    {{ m.company || m.organization || m.subtitle }}
+                    {{ isRtl && (m.company_ar || m.organization_ar || m.subtitle_ar) ? (m.company_ar || m.organization_ar || m.subtitle_ar) : (m.company || m.organization || m.subtitle) }}
                   </p>
 
                   <p class="text-xs sm:text-sm text-slate-300/85 leading-relaxed">
-                    {{ m.description }}
+                    {{ isRtl && (m.description_ar || m.descriptionAr) ? (m.description_ar || m.descriptionAr) : m.description }}
                   </p>
                 </div>
               </div>
@@ -235,6 +235,7 @@ import { ref, reactive, computed } from 'vue'
 import { personalInfo, defaultMilestones, defaultPhilosophy, defaultAboutMetrics } from '@/data/portfolioData'
 import { portfolioService } from '@/services/portfolioService'
 import { profileState, resolveProfileAvatar } from '@/services/profileState'
+import { lang, isRtl, t } from '@/services/siteLanguage'
 
 const props = defineProps({
   profile: {

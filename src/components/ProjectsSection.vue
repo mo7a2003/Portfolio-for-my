@@ -14,10 +14,10 @@
         <div>
           <div class="section-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] text-[#00f2fe] font-mono text-xs tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(0,242,254,0.15)]">
             <span class="w-2 h-2 rounded-full bg-[#00f2fe] animate-pulse"></span>
-            <span>// CURATED 3D &amp; FRONT-END CASE STUDIES</span>
+            <span>{{ t.projectsSubtitle }}</span>
           </div>
           <h2 class="section-title text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-            Selected <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-[#00f2fe]">Projects</span>
+            {{ t.projectsTitle }} <span class="bg-clip-text text-transparent bg-gradient-to-r from-[#ff5500] via-amber-400 to-[#00f2fe]">{{ t.projectsTitleHighlight }}</span>
           </h2>
         </div>
 
@@ -167,7 +167,7 @@
                   <span>{{ project.status || 'Production Ready' }}</span>
                 </div>
                 <span class="px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase font-mono bg-[#ff5500]/15 text-amber-300 border border-[#ff5500]/35">
-                  {{ project.badge || project.category || 'Featured' }}
+                  {{ getLocalized(project, 'badge', project.badge || getLocalized(project, 'category', project.category || 'Featured')) }}
                 </span>
               </div>
 
@@ -236,14 +236,14 @@
               <div>
                 <div class="flex items-center justify-between gap-2 mb-1.5">
                   <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    {{ project.title }}
+                    {{ getLocalized(project, 'title', project.title) }}
                   </h3>
                   <span class="text-xs font-mono text-amber-400 font-bold">
-                    {{ project.year || '2025' }}
+                    {{ project.completion_date || project.year || '2025' }}
                   </span>
                 </div>
                 <p class="text-xs sm:text-sm text-slate-300/85 line-clamp-2 mb-4">
-                  {{ project.tagline || project.subtitle || project.description }}
+                  {{ getLocalized(project, 'tagline', getLocalized(project, 'subtitle', getLocalized(project, 'description', project.description))) }}
                 </p>
 
                 <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
@@ -261,7 +261,7 @@
                     @click.stop="$emit('open-project', project)"
                     class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff5500] to-amber-500 text-white font-bold text-xs shadow-[0_0_20px_rgba(255,85,0,0.35)] hover:scale-105 transition-transform shrink-0 cursor-pointer"
                   >
-                    Inspect Case →
+                    {{ t.inspectCase }}
                   </button>
                 </div>
               </div>
@@ -311,6 +311,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { projects as defaultProjects } from '../data/portfolioData'
+import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
 
 const props = defineProps({
   projects: {

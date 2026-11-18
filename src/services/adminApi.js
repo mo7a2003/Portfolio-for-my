@@ -46,11 +46,40 @@ export function formatApiError(err, fallback = 'Operation failed.') {
 export function buildProjectFormData(project, rawFile = null) {
   const formData = new FormData()
 
-  // 1. Basic Identity
+  // 1. Basic Identity & Bilingual Fields
   formData.append('title', project.title || '')
+  if (project.title_ar || project.titleAr) {
+    formData.append('title_ar', project.title_ar || project.titleAr)
+    formData.append('titleAr', project.title_ar || project.titleAr)
+  }
   formData.append('subtitle', project.subtitle || project.pitch || project.tagline || '')
+  if (project.subtitle_ar || project.subtitleAr) {
+    formData.append('subtitle_ar', project.subtitle_ar || project.subtitleAr)
+    formData.append('subtitleAr', project.subtitle_ar || project.subtitleAr)
+  }
   formData.append('category', project.category || 'Web Application')
+  if (project.category_ar || project.categoryAr) {
+    formData.append('category_ar', project.category_ar || project.categoryAr)
+    formData.append('categoryAr', project.category_ar || project.categoryAr)
+  }
   formData.append('year', project.year ? project.year.toString() : new Date().getFullYear().toString())
+
+  // Dates (both snake_case and camelCase compatibility)
+  const startDate = project.start_date || project.startDate || ''
+  if (startDate) {
+    formData.append('start_date', startDate)
+    formData.append('startDate', startDate)
+  }
+  const endDate = project.end_date || project.endDate || ''
+  if (endDate) {
+    formData.append('end_date', endDate)
+    formData.append('endDate', endDate)
+  }
+  const completionDate = project.completion_date || project.completionDate || (project.year ? project.year.toString() : '')
+  if (completionDate) {
+    formData.append('completion_date', completionDate)
+    formData.append('completionDate', completionDate)
+  }
 
   // 2. Lifecycle Status (must be valid string: 'active' | 'completed' | 'featured' | 'draft')
   const allowedStatuses = ['active', 'completed', 'featured', 'draft']
@@ -83,6 +112,10 @@ export function buildProjectFormData(project, rawFile = null) {
 
   // 5. Comprehensive Description
   formData.append('description', project.description || '')
+  if (project.description_ar || project.descriptionAr) {
+    formData.append('description_ar', project.description_ar || project.descriptionAr)
+    formData.append('descriptionAr', project.description_ar || project.descriptionAr)
+  }
 
   // 6. Tech Stack (both string 'tech_stack' and array 'tech[]' + JSON)
   let techArray = []
@@ -146,11 +179,23 @@ export function buildSkillFormData(skill, rawFile = null) {
 
   const formData = new FormData()
   formData.append('name', skill.name || '')
+  if (skill.name_ar || skill.nameAr) {
+    formData.append('name_ar', skill.name_ar || skill.nameAr)
+    formData.append('nameAr', skill.name_ar || skill.nameAr)
+  }
   formData.append('category', skill.category || 'Frontend')
+  if (skill.category_ar || skill.categoryAr) {
+    formData.append('category_ar', skill.category_ar || skill.categoryAr)
+    formData.append('categoryAr', skill.category_ar || skill.categoryAr)
+  }
   formData.append('level', level)
   formData.append('proficiency', level)
   formData.append('color', skill.color || '#fbbf24')
   formData.append('description', skill.description || '')
+  if (skill.description_ar || skill.descriptionAr) {
+    formData.append('description_ar', skill.description_ar || skill.descriptionAr)
+    formData.append('descriptionAr', skill.description_ar || skill.descriptionAr)
+  }
   formData.append('status', skill.status || 'active')
   formData.append('is_active', skill.isActive !== false && skill.is_active !== false ? '1' : '0')
 
@@ -676,16 +721,31 @@ export const adminApi = {
         ? certData.tags.split(',').map((t) => t.trim()).filter(Boolean)
         : []
 
+    const issueDate = String(certData.issue_date || certData.issueDate || certData.date || certData.year || new Date().getFullYear()).trim()
+    const completionDate = String(certData.completion_date || certData.completionDate || issueDate).trim()
+
     const payload = {
       id: id || certData.id || `cert_${Date.now()}`,
       title: (certData.title || '').trim(),
+      title_ar: (certData.title_ar || certData.titleAr || '').trim(),
+      titleAr: (certData.title_ar || certData.titleAr || '').trim(),
       issuer: (certData.issuer || '').trim(),
-      year: String(certData.year || new Date().getFullYear()).trim(),
+      issuer_ar: (certData.issuer_ar || certData.issuerAr || '').trim(),
+      issuerAr: (certData.issuer_ar || certData.issuerAr || '').trim(),
+      year: issueDate,
+      date: issueDate,
+      issue_date: issueDate,
+      issueDate: issueDate,
+      completion_date: completionDate,
+      completionDate: completionDate,
       badge: (certData.badge || 'VERIFIED CREDENTIAL').trim(),
+      badge_ar: (certData.badge_ar || certData.badgeAr || '').trim(),
       project: (certData.project || '').trim(),
-      hash: (certData.hash || `ID // VERIFIED-${certData.year || 2026}`).trim(),
+      hash: (certData.hash || `ID // VERIFIED-${issueDate}`).trim(),
       accent: certData.accent || '#f59e0b',
       description: (certData.description || '').trim(),
+      description_ar: (certData.description_ar || certData.descriptionAr || '').trim(),
+      descriptionAr: (certData.description_ar || certData.descriptionAr || '').trim(),
       tags: tagsArray,
       url: (certData.url || '').trim(),
       image: certData.image || '',
@@ -810,23 +870,51 @@ export const adminApi = {
       ''
     ).trim()
 
+    const companyArVal = String(
+      m.company_ar ??
+      m.companyAr ??
+      m.organization_ar ??
+      m.subtitle_ar ??
+      fallback?.company_ar ??
+      fallback?.companyAr ??
+      ''
+    ).trim()
+
+    const startDateVal = m.start_date || m.startDate || periodVal
+    const endDateVal = m.end_date || m.endDate || ''
+    const completionDateVal = m.completion_date || m.completionDate || periodVal
+
     return {
       ...fallback,
       ...m,
       id: m.id || fallback?.id || `ms_${idx + 1}`,
       title: String(m.title ?? fallback?.title ?? '').trim(),
+      title_ar: String(m.title_ar ?? m.titleAr ?? fallback?.title_ar ?? fallback?.titleAr ?? '').trim(),
+      titleAr: String(m.title_ar ?? m.titleAr ?? fallback?.title_ar ?? fallback?.titleAr ?? '').trim(),
       period: periodVal,
       year: periodVal,
       date: periodVal,
       time_frame: periodVal,
       timeframe: periodVal,
       duration: periodVal,
+      start_date: startDateVal,
+      startDate: startDateVal,
+      end_date: endDateVal,
+      endDate: endDateVal,
+      completion_date: completionDateVal,
+      completionDate: completionDateVal,
       company: companyVal,
       organization: companyVal,
       subtitle: companyVal,
+      company_ar: companyArVal,
+      organization_ar: companyArVal,
+      subtitle_ar: companyArVal,
       description: String(m.description ?? fallback?.description ?? '').trim(),
+      description_ar: String(m.description_ar ?? m.descriptionAr ?? fallback?.description_ar ?? fallback?.descriptionAr ?? '').trim(),
+      descriptionAr: String(m.description_ar ?? m.descriptionAr ?? fallback?.description_ar ?? fallback?.descriptionAr ?? '').trim(),
       color: m.color || fallback?.color || '#d4af37',
-      badge: m.badge !== undefined ? m.badge : (fallback?.badge ?? null)
+      badge: m.badge !== undefined ? m.badge : (fallback?.badge ?? null),
+      badge_ar: m.badge_ar || m.badgeAr || fallback?.badge_ar || null
     }
   },
 
@@ -903,23 +991,37 @@ export const adminApi = {
       ...base,
       name,
       full_name: name,
+      fullName: name,
       nameAr,
       name_ar: nameAr,
+      fullNameAr: nameAr,
+      full_name_ar: nameAr,
       title,
       headline: title,
       role: title,
       job_title: title,
+      title_ar: base.title_ar || base.titleAr || '',
+      titleAr: base.title_ar || base.titleAr || '',
       subtitle,
       tagline: subtitle,
+      subtitle_ar: base.subtitle_ar || base.subtitleAr || '',
+      subtitleAr: base.subtitle_ar || base.subtitleAr || '',
       shortBio,
       short_bio: shortBio,
       summary: shortBio,
+      short_bio_ar: base.short_bio_ar || base.shortBioAr || '',
+      shortBioAr: base.short_bio_ar || base.shortBioAr || '',
       fullBio,
       full_bio: fullBio,
       bio: fullBio,
       about: fullBio,
       biography: fullBio,
+      full_bio_ar: base.full_bio_ar || base.fullBioAr || base.bio_ar || '',
+      fullBioAr: base.full_bio_ar || base.fullBioAr || base.bio_ar || '',
+      bio_ar: base.bio_ar || base.full_bio_ar || '',
       location,
+      location_ar: base.location_ar || base.locationAr || '',
+      locationAr: base.location_ar || base.locationAr || '',
       email,
       contact_email: email,
       whatsapp,
@@ -969,23 +1071,37 @@ export const adminApi = {
     const payload = {
       name,
       full_name: name,
+      fullName: name,
       nameAr,
       name_ar: nameAr,
+      fullNameAr: nameAr,
+      full_name_ar: nameAr,
       title,
       headline: title,
       role: title,
       job_title: title,
+      title_ar: nullIfEmpty(profileData.title_ar ?? profileData.titleAr ?? merged.title_ar),
+      titleAr: nullIfEmpty(profileData.title_ar ?? profileData.titleAr ?? merged.title_ar),
       subtitle,
       tagline: subtitle,
+      subtitle_ar: nullIfEmpty(profileData.subtitle_ar ?? profileData.subtitleAr ?? merged.subtitle_ar),
+      subtitleAr: nullIfEmpty(profileData.subtitle_ar ?? profileData.subtitleAr ?? merged.subtitle_ar),
       shortBio,
       short_bio: shortBio,
       summary: shortBio,
+      short_bio_ar: nullIfEmpty(profileData.short_bio_ar ?? profileData.shortBioAr ?? merged.short_bio_ar),
+      shortBioAr: nullIfEmpty(profileData.short_bio_ar ?? profileData.shortBioAr ?? merged.short_bio_ar),
       fullBio,
       full_bio: fullBio,
       bio: fullBio,
       about: fullBio,
       biography: fullBio,
+      full_bio_ar: nullIfEmpty(profileData.full_bio_ar ?? profileData.fullBioAr ?? profileData.bio_ar ?? merged.full_bio_ar),
+      fullBioAr: nullIfEmpty(profileData.full_bio_ar ?? profileData.fullBioAr ?? profileData.bio_ar ?? merged.full_bio_ar),
+      bio_ar: nullIfEmpty(profileData.bio_ar ?? profileData.full_bio_ar ?? profileData.fullBioAr ?? merged.bio_ar),
       location,
+      location_ar: nullIfEmpty(profileData.location_ar ?? profileData.locationAr ?? merged.location_ar),
+      locationAr: nullIfEmpty(profileData.location_ar ?? profileData.locationAr ?? merged.location_ar),
       email,
       contact_email: email,
       whatsapp,

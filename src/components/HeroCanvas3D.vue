@@ -103,7 +103,7 @@
         <div class="absolute -bottom-4 inset-x-0 flex justify-center z-25 pointer-events-none">
           <span class="px-4 py-1.5 rounded-full bg-[#05060b]/95 border border-[#ff5500]/50 text-amber-300 font-mono text-[10px] sm:text-[11px] tracking-widest uppercase backdrop-blur-xl shadow-[0_0_25px_rgba(255,85,0,0.35)] flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>{{ currentName }} ✦ 3D ARCHITECT</span>
+            <span>{{ currentName }} ✦ {{ lang === 'ar' ? 'مهندس واجهات ثلاثية الأبعاد' : '3D ARCHITECT' }}</span>
           </span>
         </div>
       </div>
@@ -200,7 +200,7 @@
             />
           </div>
           <div class="pr-1">
-            <span class="text-[9px] font-mono text-amber-400 block uppercase">FEATURED CASE</span>
+            <span class="text-[9px] font-mono text-amber-400 block uppercase">{{ lang === 'ar' ? 'مشروع مميز' : 'FEATURED CASE' }}</span>
             <span class="text-xs font-bold text-white truncate max-w-[95px] block">{{ signatureProjects.wasla.title }}</span>
           </div>
         </div>
@@ -214,6 +214,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { personalInfo } from '@/data/portfolioData'
 import { profileState, resolveProfilePortrait } from '@/services/profileState'
+import { lang } from '@/services/siteLanguage'
 import gsap from 'gsap'
 
 const props = defineProps({
@@ -246,7 +247,12 @@ const currentPortrait = computed(() => {
     ...(props.profile || {})
   })
 })
-const currentName = computed(() => props.profile?.name || profileState.name || personalInfo.name || 'MOHAMMED ALHWAITI')
+const currentName = computed(() => {
+  if (lang.value === 'ar') {
+    return props.profile?.nameAr || props.profile?.name_ar || profileState.nameAr || personalInfo.nameAr || 'محمد الحويطي'
+  }
+  return props.profile?.name || profileState.name || personalInfo.name || 'MOHAMMED ALHWAITI'
+})
 
 const containerRef = ref(null)
 const localCanvasRef = ref(null)

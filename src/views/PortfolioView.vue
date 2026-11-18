@@ -1,5 +1,9 @@
 <template>
-  <div class="portfolio-luxury-root relative min-h-screen bg-[#05060b] text-slate-100 overflow-x-hidden selection:bg-[#ff5500] selection:text-white">
+  <div 
+    :dir="isRtl ? 'rtl' : 'ltr'"
+    class="portfolio-luxury-root relative min-h-screen bg-[#05060b] text-slate-100 overflow-x-hidden selection:bg-[#ff5500] selection:text-white"
+    :class="isRtl ? 'font-sans text-right' : 'font-sans text-left'"
+  >
     
     <!-- ======================================================== -->
     <!-- GLOBAL ATMOSPHERE: 3D Perspective Grid, Morphing Orbs    -->
@@ -120,6 +124,7 @@ import Footer from '../components/Footer.vue'
 import { personalInfo, projects as defaultProjects, skills as defaultSkills, defaultCertificates, defaultSocialLinks } from '../data/portfolioData'
 import { portfolioService, normalizeProject, normalizeSkill } from '../services/portfolioService'
 import { profileState, setProfileState, resolveProfileAvatar } from '../services/profileState'
+import { lang, isRtl } from '../services/siteLanguage'
 
 // Register GSAP ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)
