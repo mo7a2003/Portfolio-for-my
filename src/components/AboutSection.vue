@@ -45,7 +45,7 @@
                     :src="resolveProfileAvatar(currentProfile)" 
                     :alt="currentProfile.name" 
                     class="w-full h-full object-cover rounded-[14px] bg-[#05060b]"
-                    @error="(e) => e.target.src = '/developer-portrait.jpg'"
+                    @error="(e) => e.target.style.display = 'none'"
                   />
                   <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-[#05060b] flex items-center justify-center text-[10px] text-black font-bold" title="Verified Principal Architect">
                     ✓

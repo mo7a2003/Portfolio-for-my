@@ -4,8 +4,8 @@ export const personalInfo = {
   title: "WEB DESIGNER & FRONT-END DEVELOPER",
   shortBio: "Crafting exceptional, interactive 3D web experiences and powerful front-end solutions.",
   fullBio: "A passionate front-end developer and UI/UX designer blending cutting-edge WebGL 3D graphics, fluid motion design, and rock-solid modern architectures to build immersive digital products that leave a lasting impression.",
-  avatar: "/developer-portrait.jpg",
-  portrait: "/mohammed-portrait.png",
+  avatar: "",
+  portrait: "",
   location: "Saudi Arabia / Remote",
   email: "contact@alhwaiti.dev",
   whatsapp: "https://wa.me/970599000000",
@@ -169,7 +169,7 @@ export const projects = [
       { label: "User Engagement", value: "+40%" },
       { label: "Load Time", value: "< 0.8s" }
     ],
-    previewImage: "/projects/wasla-preview.svg",
+    previewImage: "",
     accentColor: "#00f0ff",
     githubUrl: "https://github.com/mohammed-alhwaiti/wasla",
     liveUrl: "https://wasla.demo.dev"
@@ -196,7 +196,7 @@ export const projects = [
       { label: "Reconciliation Accuracy", value: "99.98%" },
       { label: "Security Rating", value: "A+ Bank Grade" }
     ],
-    previewImage: "/projects/wafarcash-preview.svg",
+    previewImage: "",
     accentColor: "#d4af37",
     githubUrl: "https://github.com/mohammed-alhwaiti/wafarcash",
     liveUrl: "https://wafarcash.demo.dev"
@@ -223,7 +223,7 @@ export const projects = [
       { label: "Search Accuracy", value: "96.4%" },
       { label: "Render Framerate", value: "Solid 60fps" }
     ],
-    previewImage: "/projects/vibelocate-preview.svg",
+    previewImage: "",
     accentColor: "#a855f7",
     githubUrl: "https://github.com/mohammed-alhwaiti/vibelocate-ai",
     liveUrl: "https://vibelocate.demo.dev"
@@ -250,7 +250,7 @@ export const projects = [
       { label: "Avg Session Duration", value: "4m 12s" },
       { label: "Dribbble Trending", value: "#1 Showcase" }
     ],
-    previewImage: "/projects/lumiere-preview.svg",
+    previewImage: "",
     accentColor: "#f43f5e",
     githubUrl: "https://github.com/mohammed-alhwaiti/lumiere",
     liveUrl: "https://lumiere.demo.dev"

@@ -82,11 +82,12 @@
 
           <!-- High-Res Portrait -->
           <img 
+            v-if="currentPortrait"
             :src="currentPortrait" 
             :alt="currentName" 
             class="portrait-mask-fade w-full h-full object-contain object-bottom filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.95)] transition-transform duration-500 ease-out group-hover:scale-105"
             :style="portraitParallaxStyle"
-            @error="(e) => e.target.src = '/developer-portrait.jpg'"
+            @error="(e) => e.target.style.display = 'none'"
           />
 
           <!-- Soft Bottom Eclipse Horizon Fade -->
@@ -193,11 +194,15 @@
         <div class="hud-float-2 px-3 py-2 rounded-2xl backdrop-blur-xl bg-[#090b14]/90 border border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.25)] flex items-center gap-2.5 group-hover/orb:scale-105 transition-transform">
           <div class="w-8 h-8 rounded-xl overflow-hidden border border-amber-400/50 bg-[#05060b] shrink-0">
             <img 
-              :src="signatureProjects.wasla.image || signatureProjects.wasla.thumbnail || '/projects/wasla-preview.svg'" 
+              v-if="signatureProjects.wasla.image || signatureProjects.wasla.thumbnail"
+              :src="signatureProjects.wasla.image || signatureProjects.wasla.thumbnail" 
               :alt="signatureProjects.wasla.title"
               class="w-full h-full object-cover"
-              @error="(e) => e.target.src = '/projects/wasla-preview.svg'"
+              @error="(e) => e.target.style.display = 'none'"
             />
+            <div v-else class="w-full h-full bg-slate-900 flex items-center justify-center text-[10px] text-amber-400 font-mono">
+              3D
+            </div>
           </div>
           <div class="pr-1">
             <span class="text-[9px] font-mono text-amber-400 block uppercase">{{ lang === 'ar' ? 'مشروع مميز' : 'FEATURED CASE' }}</span>

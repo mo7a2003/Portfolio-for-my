@@ -193,11 +193,16 @@
                   <div class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 bg-slate-950/20 z-10 rounded-xl"></div>
 
                   <img 
-                    :src="project.image || project.thumbnail_url || project.thumbnail || project.previewImage || project.preview_image || '/projects/wasla-preview.svg'" 
+                    v-if="project.image || project.thumbnail_url || project.thumbnail || project.previewImage || project.preview_image"
+                    :src="project.image || project.thumbnail_url || project.thumbnail || project.previewImage || project.preview_image" 
                     :alt="project.title"
-                    @error="(e) => e.target.src = '/projects/wasla-preview.svg'"
+                    @error="(e) => e.target.style.display = 'none'"
                     class="w-full h-full object-contain rounded-xl transition-transform duration-700 group-hover/mockup:scale-105 filter contrast-105 drop-shadow-[0_12px_28px_rgba(0,0,0,0.8)]"
                   />
+                  <div v-else class="w-full h-full flex flex-col items-center justify-center p-6 text-center font-mono">
+                    <span class="text-xs text-amber-400 font-bold mb-1">// X-RAY BLUEPRINT</span>
+                    <span class="text-[11px] text-slate-400 truncate max-w-full">{{ project.title }}</span>
+                  </div>
 
                   <!-- Always-On Laser X-Ray Blueprint Overlay on Active Center Card -->
                   <div 

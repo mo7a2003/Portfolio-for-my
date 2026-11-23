@@ -169,10 +169,10 @@
           </div>
         </div>
         <div class="text-3xl font-black text-white font-mono tracking-tight" dir="ltr">
-          {{ stats.portfolioViews ? stats.portfolioViews.toLocaleString() : '14,280' }}
+          {{ stats.portfolioViews != null ? Number(stats.portfolioViews).toLocaleString() : '0' }}
         </div>
         <div class="flex items-center justify-between mt-2.5 text-[11px] font-mono">
-          <span class="text-emerald-400 font-medium">{{ stats.viewsGrowth || '+18.4%' }} {{ t.kpiVisitsSub }}</span>
+          <span class="text-emerald-400 font-medium">{{ stats.viewsGrowth || '0%' }} {{ t.kpiVisitsSub }}</span>
           <span class="text-slate-500">{{ t.kpiAnalytics }}</span>
         </div>
         <!-- 2px Bottom Neon Progress Line -->

@@ -62,6 +62,12 @@ const routes = [
         meta: { title: 'Certificates & Awards | Alhwaiti Admin V22' }
       },
       {
+        path: 'articles',
+        name: 'AdminArticles',
+        component: () => import('../views/admin/Articles.vue'),
+        meta: { title: 'Articles & Insights | Alhwaiti Admin V22' }
+      },
+      {
         path: 'about',
         name: 'AdminAbout',
         component: AboutSettings,

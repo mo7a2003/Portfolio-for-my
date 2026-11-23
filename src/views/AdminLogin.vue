@@ -233,10 +233,10 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
-// Quick helper to fill demo credentials
+// Quick helper to reset fields
 const autofillDemo = () => {
-  email.value = 'admin@alhwaiti.dev'
-  password.value = 'CyberObsidian2026!'
+  email.value = ''
+  password.value = ''
   errorMessage.value = ''
 }
 

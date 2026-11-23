@@ -24,6 +24,7 @@
 import { reactive, onMounted, onBeforeUnmount } from 'vue'
 import CyberBackgroundCanvas from './components/CyberBackgroundCanvas.vue'
 import { initTheme } from './services/themeState'
+import apiClient from './services/apiClient'
 
 const mousePos = reactive({ x: -200, y: -200 })
 
@@ -32,8 +33,19 @@ const onMouseMove = (e) => {
   mousePos.y = e.clientY
 }
 
+const trackVisit = async () => {
+  try {
+    if (!window.location.pathname.startsWith('/admin')) {
+      await apiClient.post('/visit', { path: window.location.pathname })
+    }
+  } catch (e) {
+    // Silent fail for network or tracking blocks
+  }
+}
+
 onMounted(() => {
   initTheme()
+  trackVisit()
   window.addEventListener('mousemove', onMouseMove)
 })
 

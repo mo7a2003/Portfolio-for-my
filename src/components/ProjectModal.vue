@@ -139,12 +139,18 @@
 
                 <!-- Layer 2: Crisp Full Uncropped Asset (object-contain) -->
                 <img 
+                  v-if="projectImage"
                   :key="projectImage"
                   :src="projectImage" 
                   :alt="currentProject.title"
-                  @error="(e) => e.target.src = '/projects/wasla-preview.svg'"
+                  @error="(e) => e.target.style.display = 'none'"
                   class="relative z-10 max-h-full max-w-full object-contain rounded-xl drop-shadow-[0_15px_35px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:scale-105" 
                 />
+                <div v-else class="relative z-10 text-center p-6 font-mono text-cyan-400 text-xs flex flex-col items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                  <span>// ARCHITECTURAL BLUEPRINT PREVIEW</span>
+                  <span class="text-slate-400 text-[10px]">{{ currentProject.title }}</span>
+                </div>
 
                 <!-- Layer 3: Always-On X-Ray Blueprint Wireframe Grid & Laser Beam -->
                 <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(0,242,254,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,242,254,0.06)_1px,transparent_1px)] bg-[size:1.75rem_1.75rem] z-20 opacity-60"></div>
@@ -419,7 +425,7 @@ const closeModal = () => {
 }
 
 const projectImage = computed(() => {
-  if (!currentProject.value) return '/projects/wasla-preview.svg'
+  if (!currentProject.value) return ''
   const raw =
     currentProject.value.image ||
     currentProject.value.thumbnail_url ||
@@ -427,7 +433,7 @@ const projectImage = computed(() => {
     currentProject.value.previewImage ||
     currentProject.value.preview_image ||
     ''
-  return resolveAssetUrl(raw) || '/projects/wasla-preview.svg'
+  return resolveAssetUrl(raw)
 })
 
 const formattedDomain = computed(() => {

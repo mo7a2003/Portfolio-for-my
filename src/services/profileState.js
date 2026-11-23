@@ -52,7 +52,10 @@ export function resolveProfilePortrait(profile = {}) {
   }
 
   const firstValid = customCandidates[0]
-  return resolveProfileAssetUrl(firstValid) || personalInfo.portrait || '/mohammed-portrait.png'
+  if (firstValid) {
+    return resolveProfileAssetUrl(firstValid)
+  }
+  return ''
 }
 
 /**
@@ -76,7 +79,10 @@ export function resolveProfileAvatar(profile = {}) {
   }
 
   const firstValid = customCandidates[0]
-  return resolveProfileAssetUrl(firstValid) || personalInfo.avatar || '/developer-portrait.jpg'
+  if (firstValid) {
+    return resolveProfileAssetUrl(firstValid)
+  }
+  return ''
 }
 
 function loadInitialProfile() {

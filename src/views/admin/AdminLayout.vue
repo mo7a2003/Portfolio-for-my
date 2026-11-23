@@ -78,7 +78,7 @@
                   :src="resolveProfilePortrait(profileState)" 
                   alt="Mohammed Alhwaiti" 
                   class="w-full h-full object-cover rounded-[14px] bg-[#060913]"
-                  @error="(e) => e.target.src = '/mohammed-portrait.png'"
+                  @error="(e) => e.target.style.display = 'none'"
                 />
               </div>
               <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#060913] shadow-[0_0_10px_rgba(52,211,153,0.9)]"></span>
@@ -378,6 +378,7 @@ import {
   FolderGit2, 
   Cpu, 
   Award,
+  BookOpen,
   Briefcase, 
   Share2, 
   Mail, 
@@ -405,6 +406,7 @@ const unreadCount = ref(0)
 const projectsCount = ref(3)
 const skillsCount = ref(11)
 const certsCount = ref(3)
+const articlesCount = ref(0)
 const socialLinksCount = ref(9)
 const adminAvatar = ref('/mohammed-portrait.png')
 let clockInterval = null
@@ -424,6 +426,7 @@ const refreshCounts = async () => {
     projectsCount.value = stats.totalProjects ?? 3
     skillsCount.value = stats.totalSkills ?? 11
     certsCount.value = stats.totalCertificates ?? 3
+    articlesCount.value = stats.totalArticles ?? 0
     socialLinksCount.value = stats.totalSocialLinks ?? 9
     if (profileRes) {
       const p = profileRes.data || profileRes
@@ -454,6 +457,7 @@ const currentRouteName = computed(() => {
   if (route.path.includes('/projects')) return t.value.navProjects
   if (route.path.includes('/skills')) return t.value.navSkills
   if (route.path.includes('/certificates')) return t.value.navCertificates
+  if (route.path.includes('/articles')) return t.value.navArticles
   if (route.path.includes('/about')) return t.value.navAbout
   if (route.path.includes('/social-links')) return t.value.navSocial
   if (route.path.includes('/messages')) return t.value.navMessages
@@ -493,6 +497,15 @@ const navItems = computed(() => [
     compactBadge: certsCount.value.toString(),
     badgeClass: 'bg-[#00f2fe]/15 text-[#00f2fe] border border-[#00f2fe]/35',
     compactBadgeClass: 'bg-[#00f2fe] text-slate-950'
+  },
+  { 
+    path: '/admin/articles', 
+    label: t.value.navArticles, 
+    icon: BookOpen,
+    badge: articlesCount.value.toString(),
+    compactBadge: articlesCount.value.toString(),
+    badgeClass: 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/35',
+    compactBadgeClass: 'bg-cyan-400 text-slate-950'
   },
   { 
     path: '/admin/about', 

@@ -262,6 +262,31 @@ export const adminApi = {
   // ==========================================
   async getOverviewStats(preloadedProjects = null) {
     try {
+      // First attempt to fetch unified overview telemetry from backend
+      const overviewRes = await apiClient.get('/admin/overview-stats').catch(() => null)
+      if (overviewRes && overviewRes.data && overviewRes.data.data) {
+        const d = overviewRes.data.data
+        return {
+          totalProjects: d.total_projects ?? 0,
+          activeProjects: d.active_projects ?? 0,
+          totalInquiries: d.total_inquiries ?? 0,
+          unreadInquiries: d.unread_inquiries ?? 0,
+          totalSkills: d.total_skills ?? 0,
+          totalCertificates: d.total_certificates ?? 0,
+          totalSocialLinks: d.total_social_links ?? 0,
+          totalArticles: d.total_articles ?? 0,
+          publishedArticles: d.published_articles ?? 0,
+          portfolioViews: d.portfolio_views ?? 0,
+          viewsGrowth: d.views_growth || '0%',
+          todayVisits: d.today_visits ?? 0,
+          uptime: '99.99%',
+          avgLatency: '18ms',
+          database: 'PostgreSQL (Supabase) Connected',
+          apiEngine: 'Laravel Sanctum V11',
+          lastDeploy: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        }
+      }
+
       const projects = Array.isArray(preloadedProjects)
         ? preloadedProjects
         : await this.getProjects().catch(() => [])
@@ -269,6 +294,8 @@ export const adminApi = {
       const messages = await this.getMessages().catch(() => [])
       const certificates = await this.getCertificates().catch(() => [])
       const socialLinks = await this.getSocialLinks().catch(() => [])
+      const visitStatsRes = await apiClient.get('/visit/stats').catch(() => null)
+      const visitData = visitStatsRes?.data?.data || {}
 
       const activeProjects = projects.filter(p => p.is_active !== false && p.isActive !== false).length
       const unreadMessages = messages.filter(m => !m.is_read).length
@@ -281,8 +308,8 @@ export const adminApi = {
         totalSkills: skills.length,
         totalCertificates: certificates.length,
         totalSocialLinks: socialLinks.length,
-        portfolioViews: 14280,
-        viewsGrowth: '+18.4%',
+        portfolioViews: visitData.total_visits ?? 0,
+        viewsGrowth: visitData.growth_rate || '0%',
         uptime: '99.99%',
         avgLatency: '18ms',
         database: 'PostgreSQL (Supabase) Connected',
@@ -292,15 +319,15 @@ export const adminApi = {
     } catch (err) {
       console.warn('[adminApi.getOverviewStats] Error calculating stats:', err)
       return {
-        totalProjects: 4,
-        activeProjects: 4,
+        totalProjects: 0,
+        activeProjects: 0,
         totalInquiries: 0,
         unreadInquiries: 0,
-        totalSkills: 12,
-        totalCertificates: 3,
-        totalSocialLinks: 9,
-        portfolioViews: 12500,
-        viewsGrowth: '+12.5%',
+        totalSkills: 0,
+        totalCertificates: 0,
+        totalSocialLinks: 0,
+        portfolioViews: 0,
+        viewsGrowth: '0%',
         uptime: '99.98%',
         avgLatency: '24ms',
         database: 'Database Connected',
@@ -1454,6 +1481,57 @@ export const adminApi = {
     } catch (e) {}
 
     return cached
+  },
+
+  // ==========================================
+  // 9. Articles Suite (Admin\ArticleController)
+  // ==========================================
+  async getArticles(params = {}) {
+    const res = await apiClient.get('/admin/articles', { params })
+    const list = extractArray(res, 'articles')
+    return list
+  },
+
+  async getArticle(id) {
+    const res = await apiClient.get(`/admin/articles/${id}`)
+    return res.data?.data || res.data || res
+  },
+
+  async createArticle(articleData) {
+    let payload = articleData
+    let headers = {}
+    if (articleData instanceof FormData) {
+      headers = { 'Content-Type': 'multipart/form-data' }
+    }
+    const res = await apiClient.post('/admin/articles', payload, { headers })
+    return res.data?.data || res.data || res
+  },
+
+  async updateArticle(id, articleData) {
+    let payload = articleData
+    let headers = {}
+    const url = `/admin/articles/${id}`
+
+    if (articleData instanceof FormData) {
+      headers = { 'Content-Type': 'multipart/form-data' }
+      if (!articleData.has('_method')) {
+        articleData.append('_method', 'PUT')
+      }
+      const res = await apiClient.post(url, articleData, { headers })
+      return res.data?.data || res.data || res
+    }
+
+    const res = await apiClient.put(url, payload)
+    return res.data?.data || res.data || res
+  },
+
+  async deleteArticle(id) {
+    const res = await apiClient.delete(`/admin/articles/${id}`)
+    return res.data || res
+  },
+
+  async toggleArticlePublish(id, isPublished) {
+    return this.updateArticle(id, { is_published: isPublished })
   }
 }
 

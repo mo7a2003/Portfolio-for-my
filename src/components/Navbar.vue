@@ -22,7 +22,7 @@
             :src="resolvedAvatarUrl" 
             :alt="isRtl && (profileState.nameAr || profileState.name_ar) ? (profileState.nameAr || profileState.name_ar) : (profileState.name || 'Mohammed Alhwaiti')" 
             class="w-full h-full object-cover rounded-[10px] bg-slate-950"
-            @error="(e) => e.target.src = '/developer-portrait.jpg'"
+            @error="(e) => e.target.style.display = 'none'"
           />
           <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-slate-950 shadow-[0_0_8px_#34d399]"></div>
         </div>
