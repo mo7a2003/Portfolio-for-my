@@ -12,6 +12,11 @@ export function resolveProfileAssetUrl(url) {
     trimmed = trimmed.replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i, BACKEND_ORIGIN)
   }
 
+  // Force HTTPS on all non-localhost URLs to prevent Mixed Content warnings
+  if (trimmed.startsWith('http://') && !/^(http:\/\/(localhost|127\.0\.0\.1))/i.test(trimmed)) {
+    trimmed = trimmed.replace(/^http:\/\//i, 'https://')
+  }
+
   if (
     trimmed.startsWith('http://') ||
     trimmed.startsWith('https://') ||
