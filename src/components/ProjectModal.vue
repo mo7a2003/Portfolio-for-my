@@ -128,7 +128,8 @@
               <div class="h-60 sm:h-68 relative flex items-center justify-center p-5 overflow-hidden bg-[#04060c]">
                 <!-- Layer 1: Ambient Blurred Background Derived from Project Image -->
                 <img 
-                  :src="projectImage" 
+                  v-if="modalImageSrc"
+                  :src="modalImageSrc" 
                   :alt="currentProject.title"
                   aria-hidden="true"
                   class="pointer-events-none absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 scale-125"
@@ -139,11 +140,12 @@
 
                 <!-- Layer 2: Crisp Full Uncropped Asset (object-contain) -->
                 <img 
-                  v-if="projectImage"
-                  :key="projectImage"
-                  :src="projectImage" 
+                  v-if="modalImageSrc"
+                  :key="modalImageSrc"
+                  :src="modalImageSrc" 
                   :alt="currentProject.title"
-                  @error="(e) => e.target.style.display = 'none'"
+                  loading="lazy"
+                  @error="handleModalImageError"
                   class="relative z-10 max-h-full max-w-full object-contain rounded-xl drop-shadow-[0_15px_35px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:scale-105" 
                 />
                 <div v-else class="relative z-10 text-center p-6 font-mono text-cyan-400 text-xs flex flex-col items-center gap-2">
@@ -358,7 +360,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { X, ExternalLink, Github, Layers } from 'lucide-vue-next'
-import { resolveAssetUrl } from '../services/portfolioService'
+import { resolveAssetUrl, resolveProjectMedia } from '../services/portfolioService'
 import { projects as defaultProjects } from '../data/portfolioData'
 import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
 
@@ -424,17 +426,33 @@ const closeModal = () => {
   emit('close')
 }
 
-const projectImage = computed(() => {
-  if (!currentProject.value) return ''
-  const raw =
-    currentProject.value.image ||
-    currentProject.value.thumbnail_url ||
-    currentProject.value.thumbnail ||
-    currentProject.value.previewImage ||
-    currentProject.value.preview_image ||
-    ''
-  return resolveAssetUrl(raw)
-})
+const modalImageSrc = ref('')
+
+watch(
+  () => currentProject.value,
+  (proj) => {
+    if (!proj) {
+      modalImageSrc.value = ''
+      return
+    }
+    const media = resolveProjectMedia(proj)
+    modalImageSrc.value = media.primary
+  },
+  { immediate: true }
+)
+
+const handleModalImageError = () => {
+  if (!currentProject.value) {
+    modalImageSrc.value = ''
+    return
+  }
+  const media = resolveProjectMedia(currentProject.value)
+  if (modalImageSrc.value === media.livePreview && media.uploadedImage) {
+    modalImageSrc.value = media.uploadedImage
+  } else {
+    modalImageSrc.value = ''
+  }
+}
 
 const formattedDomain = computed(() => {
   if (!currentProject.value) return 'app.alhwaiti.dev'

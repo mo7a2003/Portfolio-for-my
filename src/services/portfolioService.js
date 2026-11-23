@@ -29,6 +29,57 @@ export function resolveAssetUrl(url) {
 }
 
 /**
+ * Helper to generate a live website screenshot / preview URL from a project's live URL
+ */
+export function getLiveWebsitePreviewUrl(url) {
+  if (!url || typeof url !== 'string') return ''
+  let clean = url.trim()
+  if (!clean || clean === '#' || clean.includes('example.com') || clean.includes('demo.dev') || clean.includes('.local')) {
+    return ''
+  }
+
+  // Ensure HTTPS
+  if (clean.startsWith('http://')) {
+    clean = 'https://' + clean.slice(7)
+  } else if (!clean.startsWith('https://')) {
+    clean = 'https://' + clean
+  }
+
+  // Exclude localhost
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)/i.test(clean)) {
+    return ''
+  }
+
+  return `https://image.thum.io/get/width/1200/crop/800/noanimate/${encodeURIComponent(clean)}`
+}
+
+/**
+ * Intelligent project media resolver:
+ * 1. Checks if project has live website screenshot URL
+ * 2. Checks uploaded database image (project.image / project.image_url / thumbnail)
+ * 3. Returns { livePreview, uploadedImage, primary }
+ */
+export function resolveProjectMedia(project) {
+  if (!project || typeof project !== 'object') {
+    return { livePreview: '', uploadedImage: '', primary: '' }
+  }
+
+  const liveUrl = project.liveUrl || project.live_url || project.url || project.demo_url || project.website_url || ''
+  const livePreview = getLiveWebsitePreviewUrl(liveUrl)
+
+  const rawImage = project.image || project.thumbnail_url || project.thumbnail || project.previewImage || project.preview_image || ''
+  const uploadedImage = resolveAssetUrl(rawImage)
+
+  const primary = livePreview || uploadedImage || ''
+
+  return {
+    livePreview,
+    uploadedImage,
+    primary
+  }
+}
+
+/**
  * Helper to convert Laravel Collection objects (e.g. {"0": {...}, "1": {...}}) into arrays
  */
 function coerceToArray(val) {

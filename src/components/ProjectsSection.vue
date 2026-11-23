@@ -193,10 +193,11 @@
                   <div class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 bg-slate-950/20 z-10 rounded-xl"></div>
 
                   <img 
-                    v-if="project.image || project.thumbnail_url || project.thumbnail || project.previewImage || project.preview_image"
-                    :src="project.image || project.thumbnail_url || project.thumbnail || project.previewImage || project.preview_image" 
+                    v-if="getProjectImageSrc(project)"
+                    :src="getProjectImageSrc(project)" 
                     :alt="project.title"
-                    @error="(e) => e.target.style.display = 'none'"
+                    loading="lazy"
+                    @error="handleProjectImageError(project)"
                     class="w-full h-full object-contain rounded-xl transition-transform duration-700 group-hover/mockup:scale-105 filter contrast-105 drop-shadow-[0_12px_28px_rgba(0,0,0,0.8)]"
                   />
                   <div v-else class="w-full h-full flex flex-col items-center justify-center p-6 text-center font-mono">
@@ -314,9 +315,35 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, reactive } from 'vue'
 import { projects as defaultProjects } from '../data/portfolioData'
 import { lang, isRtl, t, getLocalized } from '@/services/siteLanguage'
+import { resolveProjectMedia } from '@/services/portfolioService'
+
+const projectImageOverrides = reactive({})
+
+const getProjectImageSrc = (project) => {
+  if (!project) return ''
+  const key = project.id || project.title
+  if (projectImageOverrides[key] !== undefined) {
+    return projectImageOverrides[key]
+  }
+  const media = resolveProjectMedia(project)
+  return media.primary
+}
+
+const handleProjectImageError = (project) => {
+  if (!project) return
+  const key = project.id || project.title
+  const currentSrc = getProjectImageSrc(project)
+  const media = resolveProjectMedia(project)
+
+  if (currentSrc === media.livePreview && media.uploadedImage) {
+    projectImageOverrides[key] = media.uploadedImage
+  } else {
+    projectImageOverrides[key] = ''
+  }
+}
 
 const props = defineProps({
   projects: {
