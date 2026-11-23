@@ -1,12 +1,26 @@
 <?php
 
-$allowedOrigins = env('CORS_ALLOWED_ORIGINS');
+$defaultOrigins = [
+    'https://mohammed-alhwaiti-portfolio.vercel.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+];
 
-if ($allowedOrigins === '*' || $allowedOrigins === null || $allowedOrigins === '') {
-    $parsedOrigins = ['*'];
+$allowedOriginsEnv = env('CORS_ALLOWED_ORIGINS');
+
+if (! empty($allowedOriginsEnv)) {
+    if (trim($allowedOriginsEnv) === '*') {
+        $parsedOrigins = ['*'];
+    } else {
+        $parsedOrigins = array_values(array_filter(array_map('trim', explode(',', $allowedOriginsEnv))));
+    }
 } else {
-    $parsedOrigins = array_map('trim', explode(',', $allowedOrigins));
+    $parsedOrigins = $defaultOrigins;
 }
+
+$isWildcard = in_array('*', $parsedOrigins, true);
 
 return [
 
@@ -15,26 +29,31 @@ return [
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
     |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    | Strictly configured to prevent unauthorized cross-origin requests
+    | while permitting authenticated requests from trusted frontend deployments.
     |
     */
 
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'storage/*', 'up'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
     'allowed_origins' => $parsedOrigins,
 
     'allowed_origins_patterns' => [
-        // Optional regex patterns for preview deployments (e.g. Vercel / Netlify branch deploys)
-        // env('CORS_ALLOWED_ORIGIN_REGEX', '^https:\/\/.*\.vercel\.app$'),
+        // Allow Vercel preview branch deployments securely
+        '#^https://mohammed-alhwaiti-portfolio.*\.vercel\.app$#',
+        '#^https://.*-mo7a2003s-projects\.vercel\.app$#',
     ],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => [
+        'Content-Type',
+        'X-Requested-With',
+        'Authorization',
+        'Accept',
+        'Origin',
+        'X-XSRF-TOKEN',
+    ],
 
     'exposed_headers' => [
         'Authorization',
@@ -44,6 +63,7 @@ return [
 
     'max_age' => 86400,
 
-    'supports_credentials' => env('CORS_SUPPORTS_CREDENTIALS', true),
+    // Credentials can only be true if NOT wildcard origin per W3C CORS spec
+    'supports_credentials' => $isWildcard ? false : filter_var(env('CORS_SUPPORTS_CREDENTIALS', true), FILTER_VALIDATE_BOOLEAN),
 
 ];

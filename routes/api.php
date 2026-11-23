@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\CvController;
 use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\VisitController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +42,13 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('contact.store');
 
+// Genuine page visit tracking & analytics with rate limiting
+Route::post('/visit', [VisitController::class, 'record'])
+    ->middleware('throttle:60,1')
+    ->name('visit.record');
+Route::get('/visit/stats', [VisitController::class, 'stats'])
+    ->name('visit.stats');
+
 /*
 |--------------------------------------------------------------------------
 | Admin Authentication
@@ -59,6 +67,7 @@ Route::prefix('admin')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
         Route::get('/me', [AdminAuthController::class, 'me'])->name('admin.me');
+        Route::get('/overview-stats', [AdminAuthController::class, 'overviewStats'])->name('admin.overview-stats');
 
         // Profile Settings
         Route::get('/profile', [AdminProfileController::class, 'show'])->name('admin.profile.show');

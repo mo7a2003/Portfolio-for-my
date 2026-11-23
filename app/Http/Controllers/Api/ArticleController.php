@@ -36,8 +36,12 @@ class ArticleController extends Controller
     {
         $article = Article::query()
             ->published()
-            ->where('slug', $slugOrId)
-            ->orWhere('id', is_numeric($slugOrId) ? (int) $slugOrId : 0)
+            ->where(function ($q) use ($slugOrId) {
+                $q->where('slug', $slugOrId);
+                if (is_numeric($slugOrId)) {
+                    $q->orWhere('id', (int) $slugOrId);
+                }
+            })
             ->firstOrFail();
 
         return response()->json([

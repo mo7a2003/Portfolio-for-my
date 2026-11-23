@@ -55,6 +55,8 @@ class PortfolioController extends Controller
             ->active()
             ->first();
 
+        $totalVisits = \App\Models\PageVisit::count();
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -67,6 +69,7 @@ class PortfolioController extends Controller
                 'articles' => $articles,
                 'certificates' => $certificates,
                 'social_links' => $socialLinks,
+                'total_visits' => $totalVisits,
             ],
             'meta' => [
                 'timestamp' => now()->toIso8601String(),
