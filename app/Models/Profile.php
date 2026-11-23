@@ -212,6 +212,10 @@ class Profile extends Model
             return null;
         }
 
+        if (str_starts_with($value, 'http://') && !str_starts_with($value, 'http://localhost') && !str_starts_with($value, 'http://127.0.0.1')) {
+            $value = 'https://' . substr($value, 7);
+        }
+
         if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://') || str_starts_with($value, 'data:')) {
             return $value;
         }
